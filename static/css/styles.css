@@ -1,0 +1,449 @@
+
+{%load static%}
+html {
+  min-height:  100% !important;
+}
+body {
+  margin: 0;
+  background-color: #ebfdff;
+  font-family: "Roboto", sans-serif;
+}
+
+
+.nav-style{
+  box-shadow: 0px 0px 6px 0px rgba(41,41,41,.25);
+  background: white;
+  display: flex;
+}
+
+.nav-container {
+  display: flex;
+  flex-direction: row;
+  list-style: none;
+  align-items: center;
+  width: 100%;
+  justify-content: flex-end;
+}
+
+.nav-list-item {
+  display: block;
+  color: black;
+  text-decoration: none !important;
+  margin: 0 20px;
+  color: darkslateblue;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.nav-admin {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.nav-code {
+  font-size: 20px;
+  font-weight: bold;
+  padding: 0 20px;
+}
+
+/* Home Page */
+
+.home-image {
+  width: 100%;
+  height: 300px;
+  position: relative;
+  z-index: 0;
+}
+
+.home-image-layer {
+  background-color: #242424b3;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.smaller-image {
+  height: 150px !important;
+}
+
+.home-title {
+  text-align: center;
+  width: 100%;
+  color: white;
+  font-size: 50px;
+  font-family: "Open Sans", sans-serif;
+}
+
+.home-code {
+  width: 100%;
+  text-align: center;
+}
+
+.home-input {
+  height: 50px;
+  vertical-align: top;
+  width: 330px;
+  font-size: 30px;
+  text-align: center;
+  border: 1px solid black;
+  box-shadow: 0px 0px 3px 1px black;
+}
+
+.home-input2 {
+  height: 50px;
+  width: 200px;
+  margin-left: 15px;
+  font-size: 30px;
+  vertical-align: top;
+  text-align: center;
+  border: 1px solid black;
+  box-shadow: 0px 0px 3px 1px black;
+}
+
+.home-input-button {
+  width: auto !important;
+  margin: 0px 0px 0px 20px !important;
+  padding: 0 17px !important;
+}
+
+.uq-logo {
+  width: 200px;
+}
+
+.buttons-container {
+  margin: 20px 20%;
+}
+
+.normal-btn {
+  width: 100%;
+  margin: 10px 0;
+  background: #226eb9;
+  border: none;
+  outline: none;
+  height: 50px;
+  border-radius: 20px;
+  font-size: 30px;
+  box-shadow: 0px 0px 2px 0px #00000078;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+}
+
+.normal-btn:hover {
+  background: #0e3d6c;
+  box-shadow: 0px 0px 2px 0px #4d5bfff2;
+}
+.btns-container2 {
+  padding: 10px 50px;
+}
+
+.btns-container3 {
+  padding: 10px 5%;
+}
+
+.btn-left {
+  float: left;
+  width: 30%;
+}
+
+.btn-right {
+  float: right;
+  width: 30%;
+}
+
+/* Consent Page */
+.consent-text {
+  padding: 50px 10%;
+  font-size: 20px;
+}
+
+.consent-text2 {
+  padding: 10px 10%;
+  font-size: 20px;
+}
+
+.consent-submit-container {
+  margin-top: 20px;
+}
+
+.consent-submit-button {
+  margin: 10px 0;
+  padding: 7px 27px;
+  background: darkcyan;
+  border: none;
+  outline: none;
+  height: 50px;
+  border-radius: 20px;
+  font-size: 30px;
+  box-shadow: 0px 0px 2px 0px #00000078;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+}
+
+.consent-input {
+  border: 2px solid black;
+    height: 35px;
+    width: 400px;
+    margin-bottom: 20px;
+    padding: 2px 20px;
+    font-size: 20px;
+}
+
+.clearsignature-button{
+  margin: 10px 0;
+  padding: 2px 11px;
+  background: #1a2c91;
+  border: none;
+  outline: none;
+  height: 34px;
+  border-radius: 20px;
+  font-size: 17px;
+  box-shadow: 0px 0px 2px 0px #00000078;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+}
+
+.researcher-buttons {
+  user-select: none;
+  padding: 0 50px;
+  display: flex;
+  justify-content: space-between;
+  background: white;
+  border-top: 2px solid #80808029;
+}
+
+.r-title {
+  margin: auto;
+  display: inline-block;
+  font-weight: bold;
+  font-size: 20px;
+  color: grey;
+}
+
+.r-btn {
+  text-decoration: none;
+  height: fit-content;
+  text-align: center;
+  margin: 10px 0;
+  background: #c5a473;
+  border: none;
+  outline: none;
+  width: 200px;
+  padding: 2px;
+  border-radius: 20px;
+  font-size: 30px;
+  box-shadow: 0px 0px 2px 0px #00000078;
+  font-weight: bold;
+  color: #ffffff;
+  cursor: pointer;
+  transition: all .1s linear;
+}
+
+.t-btn {
+  height: auto;
+  font-size: 15px;
+  width: auto;
+  padding: 2px 10px;
+  background: #196caf;
+}
+
+.r-btn:hover {
+  transform: scale(1.05);
+}
+
+.info {
+  color: #2239b5;
+  padding: 5px;
+  border-radius: 50%;
+  margin-left: 15px;
+}
+
+.info:hover {
+  background: #d9f9ff;
+  box-shadow: 0 0 2px 2px #1f59b361;
+}
+
+.info2 {
+  color: #2239b5;
+  padding: 5px;
+}
+
+.tooltip-info {
+  background-color: #555;
+  font-size: 15px;
+  color: #fff;
+  box-shadow: 0 0 2px 1px black;
+  padding: 10px;
+  border-radius: 6px;
+  text-align: center;
+  margin: 10px;
+}
+
+.modal {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(1.1);
+    transition: visibility 0s linear 0.25s, opacity 0.25s 0s, transform 0.25s;
+}
+.modal-content {
+    margin: 50px 0;
+    box-sizing: border-box;
+    position: absolute;
+    top: 23%;
+    left: 50%;
+    transform: translate(-50%, -30%);
+    background-color: white;
+    padding: 1rem 1.5rem;
+    width: 90%;
+    border-radius: 0.5rem;
+    max-height: 95%;
+    overflow-y: scroll;
+}
+.close-button {
+    float: right;
+    width: 40px;
+    line-height: 40px;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 20px;
+    font-size: 20px
+}
+.close-button:hover {
+    background-color: darkgray;
+}
+.show-modal {
+    z-index: 4;
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1.0);
+    transition: visibility 0s linear 0s, opacity 0.25s 0s, transform 0.25s;
+}
+
+.disabled-btn {
+  background: grey;
+  color: dimgrey;
+  cursor:default;
+}
+.disabled-btn:hover {
+  background: grey;
+  color: dimgrey;
+}
+
+.consent-li {
+  margin-top: 15px;
+}
+
+.project-info {
+  border: 2px solid black;
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s, opacity 0.5s linear;
+  height:2px;
+  overflow: hidden;
+  padding: 10px;
+}
+
+.project-btn {
+  margin: 10px 0;
+  border: 1px solid darkcyan;
+  box-shadow: 0 0 2px 1px #00000082;
+  background: transparent;
+  color: darkcyan;
+  padding: 10px;
+  font-size: 15px;
+}
+
+.project-btn:hover {
+  transform: scale(1.05);
+}
+
+.home-error{
+  color: #f11818;
+  font-size: 20px;
+  background: #0000008a;
+  width: fit-content;
+  text-align: center;
+  margin: 11px auto 0;
+  padding: 5px;
+}
+
+.redirect-container {
+  width: 218px;
+  text-align: center;
+  height: 200px;
+  background: #000000db;
+  padding: 20px;
+  border-radius: 20px;
+  box-shadow: 0 0 4px 1px #000000b3;
+  color: white;
+  margin: auto;
+  padding: 31px;
+  box-sizing: border-box;
+  position:absolute;
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
+  z-index: 15;
+}
+
+.redirect-message {
+  font-family: "Open Sans", sans-serif;
+  font-size: 20px;
+}
+
+.redirect-seconds {
+  padding: 20px;
+  font-size: 50px;
+}
+
+.quiz_timer {
+  text-align: center;
+  background: #000000db;
+  padding: 7px 20px;
+  border-radius: 9px;
+  font-size: 20px;
+  box-shadow: 0 0 4px 1px #000000b3;
+  color: white;
+  position: absolute;
+  right: 0;
+  top: 17px;
+  margin: auto;
+  left: 0;
+  width: 62px;
+}
+
+.grade_report {
+  padding: 40px 10% 20px;
+  font-size: 20px;
+}
+
+.survey_note {
+  font-size: 15px;
+  color: cornsilk;
+}
+
+.survey_section_explanation {
+  font-size: 20px;
+  color: #1770e2;
+  font-weight: bold;
+}
+
+.survey_empty {
+  font-size: 25px;
+  color: indianred;
+}

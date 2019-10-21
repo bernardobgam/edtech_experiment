@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    {% load static %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Honours Experiment</title>
+    <meta name="description" content="UQ Honours Experiment">
+    <meta name="author" content="Bernardo Gonzalez">
+    <link rel="shortcut icon" type="image/png" href="{% static 'images/favicon.ico' %}"/>
+    <link rel="stylesheet" href="{% static 'css/surveymonkey.css' %}">
+    <link rel="stylesheet" href="{% static 'css/inputs.css' %}">
+    <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/gamification.css' %}">
+    <link rel="stylesheet" href="{% static 'css/content.css' %}">
+    <link href="{% static 'css/solid.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/fontawesome.min.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/styles_mobile.css' %}">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600|Roboto:400,500,700" rel="stylesheet">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <script src="{% static 'js/lab_progress.js' %}"></script>
+    <script src="{% static 'js/redirect.js' %}"></script>
+    <script src="{% static 'js/stopwatch.js' %}"></script>
+    <script src="{% static 'js/CountDownTimer.js' %}"></script>
+    <script src="https://unpkg.com/popper.js"></script>
+    <script src="https://unpkg.com/tooltip.js"></script>
+  </head>
+  <body>
+    <nav class="nav-style">
+      {% if user.is_authenticated %}
+      <a href="{% url 'home' %}">
+        <img src="{% static 'images/UQ-logo.jpg' %}" alt="University of Queensland logo" class="uq-logo">
+      </a>
+      {% else %}
+      <img src="{% static 'images/UQ-logo.jpg' %}" alt="University of Queensland logo" class="uq-logo">
+      {% endif %}
+
+      <div class="nav-container">
+
+        {% if user.is_authenticated %}
+          <div class="nav-admin">
+            <li><a href="{% url 'cash-receipt' %}" class="nav-list-item">Cash Receipts</a></li>
+            <li><a href="{% url 'experiments' %}" class="nav-list-item">Experiments</a></li>
+            <li><a href="{% url 'logout'%}" class="nav-list-item">Logout</a></li>
+          </div>
+        {% endif %}
+
+        <!-- Instructions -->
+        <div class="modal">
+            <div class="modal-content">
+                <span class="close-button" onclick="toggleModal()"><i class="fas fa-times"></i></span>
+                <div class="consent-text">
+                  <strong>Experiment Guidelines</strong>
+                  <p>
+                  Welcome to our economics experiment. In this experiment you will be presented with real introductory economics content, fill a quiz and complete a survey.
+                  <br>
+                  The duration of this experiment is approximately 60 minutes and participation is paid.
+                  <br/><br/>
+                  <u>If necessary you may use the calculator app included in your computer</u>
+                  </p>
+                  <strong>Content</strong>
+                  <p>
+                  You will be presented with a real university introductory economics chapter and you will receive <strong>30 minutes</strong> to review this content.
+                  <br/><br/>
+                  <strong>The Content consists of:</strong>
+                  <ul>
+                    <li>Textbook Chapter and Explanations</li>
+                    <li>Graphs</li>
+                    <li>Optional Practice Questions (Not graded)</li>
+                  </ul>
+                  This content will provide everything necessary to do well in the quiz and obtain higher payment.
+                  <br/><br/>
+                  If you have any questions you may raise your hand.
+                  </p>
+                  <strong>Quiz and Survey</strong>
+                  <p>
+                  The quiz will start once the 30 minutes to review the content has passed.
+                  The quiz will have 7 questions, which will be based on the content you learn.
+                  You will have <strong>10 minutes</strong> to complete the quiz, but you can submit the quiz before the 10 minutes have passed.
+                  <br><br>
+                  The score you obtain in the quiz will determine your final earnings.
+                  After finalising the quiz you will complete an anonymous survey.
+                  </p>
+                  <strong>Timers</strong>
+                  <p>
+                  The Content and Quiz sections of the experiment will show countdown timers displaying the time you have left.
+                  <br>
+                  If the time ends before you submit your quiz it will be automatically submitted for you with your current answers.
+                  </p>
+                  <strong>Payment</strong>
+                  <p>
+                  The payment amount depends on a show up fee plus a variable amount that depends on your quiz grade.
+                  </p>
+                  <ul>
+                    <li><strong>Show Up Fee:</strong> $5 dollars (AUD)</li>
+                    <li><strong>Fee for finishing the experiment:</strong> $15 dollars (AUD)</li>
+                    <li><strong>Variable Amount based on quiz grade:</strong> Up to a maximum of $5 dollars (AUD)</li>
+                    <!-- <li><strong>Variable Amount based on quiz grade:</strong> Up to a maximum of $30 dollars (AUD)</li> -->
+                  </ul>
+                  <br/>
+                  <strong style="color: darkcyan;">If you want to check the instructions at any time just press the <i class="fas fa-info-circle info2"></i> icon on the top right</strong>
+                    <br/>
+                    <button type="button" class="project-btn" onclick="toggleProjectInformation()">Click here to see more information on the project</button>
+                    <div id="project-information" class="project-info">
+                      <p>
+                        <strong>Title of Project:</strong> The Effects of Different Learning Methods on Outcomes
+                      </p>
+                      <div class="">
+                        <strong>Name of Researchers</strong>
+                        <ul>
+                          <li>Bernardo Gonzalez Arechiga, School of Economics, University of Queensland</li>
+                          <li>Dr. Kenan Kalayci, School of Economics, University of Queensland</li>
+                          <li>Dr. Rigissa Megalokonomou, School of Economics, University of Queensland</li>
+                        </ul>
+                      </div>
+                      <div class="">
+                        <p>
+                          <strong>Purpose of study:</strong> This study investigates the use and effects of different learning methods
+                        </p>
+                        <p>
+                          <strong>Data Collected:</strong> Decisions made during the experiment will be recorded anonymously.
+                          You will need to provide your name and signature for the consent form and payment form for accounting purposes.
+                          Your name or other personal information is not connected or saved along the rest of your experiment participation.
+                        </p>
+                      </div>
+                      <strong>University of Queensland Ethics Approval and Further Information</strong>
+                      <p>
+                        "This study adheres to the Guidelines of the ethical review process of The University of Queensland and the National Statement on Ethical Conduct in Human Research. Whilst you are free to discuss your participation in this study with project staff (contactable on bernardo_gam@hotmail.com) if you would like to speak to an officer of the University not involved in the study, you may contact the Ethics Coordinators on +617 3365 3924 / +617 3443 1656 or email humanethics@research.uq.edu.au."
+                      </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if "code" in request.session %}
+        <div class="nav-code">
+          {{request.session.code}}
+          <i class="fas fa-info-circle info" id="info" onclick="toggleModal()"></i>
+        </div>
+        {% endif %}
+      </div>
+    </nav>
+
+    {% block content %}
+
+
+
+    {% endblock %}
+    <script type="text/javascript">
+     if (document.getElementById('info')) {
+      new Tooltip(document.querySelector('#info'), {
+        placement: 'left',
+        title: 'instructions',
+        template: '<div class="tooltip-info" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
+      });
+    }
+
+    var modal = document.querySelector(".modal");
+
+    function toggleModal() {
+        modal.classList.toggle("show-modal");
+    }
+
+    function windowOnClick(event) {
+        if (event.target === modal) {
+            toggleModal();
+        }
+    }
+
+    window.addEventListener("click", windowOnClick);
+
+      function toggleProjectInformationSite(){
+        console.log('button ticked');
+        let info = document.getElementById('project-information-site')
+        console.log(info.style.visibility);
+        if (info.style.visibility === "hidden" || info.style.visibility === "") {
+          // info.style.display = "block"
+          info.style.visibility = "visible"
+          info.style.opacity = 1
+          info.style.height = "auto"
+        } else {
+          // info.style.display = "none"
+          info.style.visibility = "hidden"
+          info.style.opacity = 0
+          info.style.height = '2px'
+
+        }
+      }
+
+    </script>
+  </body>
+</html>

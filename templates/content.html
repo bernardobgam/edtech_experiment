@@ -1,0 +1,958 @@
+{% extends 'site.html' %}
+
+{% block content %}
+{% load static %}
+<div>
+  <!-- Header with image-->
+  <!-- <div style="background: url('{% static 'images/book.jpg' %}')" class="smaller-image home-image">
+    <div class="smaller-image home-image-layer">
+      <div class="home-title">
+        Content - {{group}}
+      </div>
+    </div>
+  </div> -->
+
+  <!-- Content -->
+  <!-- Researcher Controls -->
+  {% if user.is_authenticated %}
+  <div class="researcher-buttons">
+    <a class="btn-left r-btn" href="{% url 'consent' %}"><span>&#60;</span> Home</a>
+    <div class="r-title" style="text-align:center">
+      Researcher Controls<br/>
+      <div class="">
+        <button type="button" class="r-btn t-btn" id="btn-treatment-1" onclick="treatment('treatment-1')" name="1">Treatment 1</button>
+        <button type="button" class="r-btn t-btn" id="btn-treatment-2" onclick="treatment('treatment-2')" name="2">Treatment 2</button>
+        <button type="button" class="r-btn t-btn" id="btn-treatment-3" onclick="treatment('treatment-3')" name="3">Treatment 3</button>
+        <button type="button" class="r-btn t-btn" id="btn-treatment-4" onclick="treatment('treatment-4')" name="4">Treatment 4</button>
+      </div>
+    </div>
+    <a class="btn-right r-btn" href="{% url 'quiz' %}">Next <span>&#62;</span></a>
+  </div>
+  {% endif %}
+
+  <div class="quiz_timer" id="content_timer" style="z-index:20"></div>
+  <button type="button" id="gotoQuiz-btn" onclick="goToQuiz()" class="normal-btn" style="display:none">Go to quiz</button>
+  <div class="redirect-container" id="content-timer-container" style="display:none">
+    <div class="redirect-message">
+      You will be redirected in
+    </div>
+    <div class="redirect-seconds" id="content-timer">10</div>
+  </div>
+
+  <div id="treatment-1" style="display:none">
+    <p style="text-align: center;font-size: 20px;">Raise your hand and you will receive a paper content. Once the timer runs out, this papers will be picked up.</p>
+  </div>
+  <div id="treatment-2" style="display:none">
+    <!-- <div style="margin:15px">
+      <a id="pdf1" target="_blank">Fullscreen</a>
+    </div> -->
+    <div class="">
+      <iframe id="pdf2" width="100%" height="900px" style="max-height:100%;height:calc(100vh - 100px)"></iframe>
+    </div>
+  </div>
+  <div id="treatment-4" style="display:none">
+    <!-- <button type="button" name="button" onclick="levelprogress()">Level Up</button>
+    <button type="button" name="button" onclick="earnbadge()">Earn Badge</button> -->
+    <div class="t4-overlay" id="t4-overlay"></div>
+    <div class="tutorial-gamification" id="tutorial-gamification">
+      <div style="margin:15px">
+        <div id="t4-tutorial-container">
+          <h2 style="text-align:center">Economics with Gamification Tutorial</h2>
+          <div class="t4-message" id="t4-message">
+            <div class="close-button-fixed" onclick="closet4message()">
+              <i class="fas fa-times"></i>
+            </div>
+            <span style="color:darkcyan;font-weight:bold">Your content comes with points and rewards! Complete this tutorial to continue to content.</span>
+            <br><br>
+            As you answer the optional practice questions you will earn badges and levels that will allow you to build your own city.
+            <br><br>
+            Tutorial:
+            <ol>
+              <li>Click the floating apple badge to earn points.</li>
+              <li>Click level up.</li>
+              <li>Build your city</li>
+              <li>Learn the content and answer more questions for more levels and to further build your city!</li>
+            </ol>
+            <span style="color:darkcyan;font-weight:bold">Press the close button and begin!</span>
+            <button type="button" class="content-next-back" onclick="closet4message()">Close message</button>
+          </div>
+        </div>
+        <div class="gamification-left">
+          <div style="display:inline-block">
+            <i class="fas fa-trophy trophy"></i>
+            <div class="" style="display:inline-block">
+              <div class="level-div">
+                Level <span class="level-tag" id="level">0</span>
+                <button type="button" class="level-button pulse" id="levelup-button" onclick="levelup()" style="display:none">Level Up!</button>
+              </div>
+              <div class="progress-bar">
+                <div class="progress" id="progress"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="city-container" id="city-container">
+          <div style="margin: 0 20px;white-space: nowrap;" id="city">
+          </div>
+        </div>
+      </div>
+      <div style="margin-left:15px;display:inline-block" id="awards">
+        <div style="display: inline-block;font-size: 20px;vertical-align: super;" id="badge-click">
+          Click on the Badge <i class="fas fa-long-arrow-alt-right"></i>
+        </div>
+        <!-- <div class="badge badge-award pulse2" id="badge1" onclick="addPoints(50,'badge1')">
+          <i class="fas fa-award award" id="badge1-i"></i>
+        </div> -->
+        <div class="badge badge-apple pulse2" id="badge2" onclick="addPoints(200,'badge2')">
+          <i class="fas fa-apple-alt apple" id="badge2-i"></i>
+        </div>
+        <!-- <div class="badge badge-crown pulse2" id="badge3" onclick="addPoints(50,'badge3')">
+          <i class="fas fa-crown crown" id="badge3-i"></i>
+        </div> -->
+      </div>
+      <!-- City Choices -->
+      <div class="city-question" id="gq-grass" style="display:none">
+        <p class="question-p">How does grass look?</p>
+        <img src="{% static 'city/grass-lightgreen.png' %}" style="height:20px;" class="city-button city-house" onclick="addGrass('{% static 'city/grass-lightgreen.png' %}','city-grass', 'gq-grass')">
+        <img src="{% static 'city/grass-darkgreen.png' %}" style="height:20px;" class="city-button city-house" onclick="addGrass('{% static 'city/grass-darkgreen.png' %}','city-grass', 'gq-grass')">
+      </div>
+      <div class="city-question" id="gq-tree" style="display:none">
+        <p class="question-p">How does trees look?</p>
+        <img src="{% static 'city/tree1-lightgreen.png' %}" style="width:18px;" class="city-button city-tree" onclick="addTree('{% static 'city/tree1-lightgreen.png' %}','city-tree', 'gq-tree')">
+        <img src="{% static 'city/tree1-darkgreen.png' %}" style="width:18px;" class="city-button city-tree" onclick="addTree('{% static 'city/tree1-darkgreen.png' %}','city-tree', 'gq-tree')">
+        <img src="{% static 'city/tree1-yellow.png' %}" style="width:18px;" class="city-button city-tree" onclick="addTree('{% static 'city/tree1-yellow.png' %}','city-tree', 'gq-tree')">
+      </div>
+      <div class="city-question" id="gq-house" style="display:none">
+        <p class="question-p">How does a lovely house look like?</p>
+        <img src="{% static 'city/house-beige.png' %}" class="city-button city-house" onclick="addBuilding('{% static 'city/house-beige.png' %}','city-house', 'gq-house')">
+        <img src="{% static 'city/house-blue.png' %}" class="city-button city-house" onclick="addBuilding('{% static 'city/house-blue.png' %}','city-house', 'gq-house')">
+        <img src="{% static 'city/house-red.png' %}" class="city-button city-house" onclick="addBuilding('{% static 'city/house-red.png' %}','city-house', 'gq-house')">
+        <img src="{% static 'city/house-green.png' %}" class="city-button city-house" onclick="addBuilding('{% static 'city/house-green.png' %}','city-house', 'gq-house')">
+      </div>
+      <div class="city-question" id="gq-vehicle" style="display:none">
+        <p class="question-p">What will you drive?</p>
+        <button type="button" class="city-button2" onclick="showQuestions(1,1,2)">Car</button>
+        <button type="button" class="city-button2" onclick="showQuestions(1,2,2)">Van</button>
+        <div class="city-hide" id="gami-1-1">
+          <img src="{% static 'city/car-red.png' %}" class="city-button city-vehicle" onclick="addBuilding('{% static 'city/car-red.png' %}','city-vehicle', 'gq-vehicle')">
+          <img src="{% static 'city/car-blue.png' %}" class="city-button city-vehicle" onclick="addBuilding('{% static 'city/car-blue.png' %}','city-vehicle', 'gq-vehicle')">
+          <img src="{% static 'city/car-yellow.png' %}" class="city-button city-vehicle" onclick="addBuilding('{% static 'city/car-yellow.png' %}','city-vehicle', 'gq-vehicle')">
+        </div>
+        <div class="city-hide" id="gami-1-2">
+          <img src="{% static 'city/van-red.png' %}" class="city-button city-vehicle" onclick="addBuilding('{% static 'city/van-red.png' %}','city-vehicle', 'gq-vehicle')">
+          <img src="{% static 'city/van-blue.png' %}" class="city-button city-vehicle" onclick="addBuilding('{% static 'city/van-blue.png' %}','city-vehicle', 'gq-vehicle')">
+          <img src="{% static 'city/van-grey.png' %}" class="city-button city-vehicle" onclick="addBuilding('{% static 'city/van-grey.png' %}','city-vehicle', 'gq-vehicle')">
+        </div>
+      </div>
+      <div class="city-question" id="gq-structure" style="display:none">
+        <p class="question-p">What does a good town needs?</p>
+        <button type="button" class="city-button2" onclick="showQuestions(2,1,4)">Shop</button>
+        <button type="button" class="city-button2" onclick="showQuestions(2,2,4)">Hotel</button>
+        <button type="button" class="city-button2" onclick="showQuestions(2,3,4)">Building</button>
+        <button type="button" class="city-button2" onclick="showQuestions(2,4,4)">Hospital</button>
+        <div class="city-hide" id="gami-2-1">
+          <img src="{% static 'city/shop-beige.png' %}" class="city-button city-vehicle" onclick="addBuilding('{% static 'city/shop-beige.png' %}','city-house', 'gq-structure')">
+          <img src="{% static 'city/shop-blue.png' %}" class="city-button city-vehicle" onclick="addBuilding('{% static 'city/shop-blue.png' %}','city-house', 'gq-structure')">
+          <img src="{% static 'city/shop-green.png' %}" class="city-button city-vehicle" onclick="addBuilding('{% static 'city/shop-green.png' %}','city-house', 'gq-structure')">
+        </div>
+        <div class="city-hide" id="gami-2-2">
+          <img src="{% static 'city/hotel-orange.png' %}" class="city-button city-vehicle" onclick="addBuilding('{% static 'city/hotel-orange.png' %}','city-house', 'gq-structure')">
+          <img src="{% static 'city/hotel-blue.png' %}" class="city-button city-vehicle" onclick="addBuilding('{% static 'city/hotel-blue.png' %}','city-house', 'gq-structure')">
+          <img src="{% static 'city/hotel-green.png' %}" class="city-button city-vehicle" onclick="addBuilding('{% static 'city/hotel-green.png' %}','city-house', 'gq-structure')">
+        </div>
+        <div class="city-hide" id="gami-2-3">
+          <img src="{% static 'city/building-black.png' %}" style="width:40px" class="city-button city-vehicle" onclick="addBuilding('{% static 'city/building-black.png' %}','city-building','gq-structure')">
+          <img src="{% static 'city/building-blue.png' %}" style="width:40px" class="city-button city-vehicle" onclick="addBuilding('{% static 'city/building-blue.png' %}','city-building','gq-structure')">
+          <img src="{% static 'city/building-orange.png' %}" style="width:40px" class="city-button city-vehicle" onclick="addBuilding('{% static 'city/building-orange.png' %}','city-building','gq-structure')">
+        </div>
+        <div class="city-hide" id="gami-2-4">
+          <img src="{% static 'city/hospital-blue.png' %}" class="city-button city-vehicle" onclick="addBuilding('{% static 'city/hospital-blue.png' %}','city-house', 'gq-structure')">
+          <img src="{% static 'city/hospital-red.png' %}" class="city-button city-vehicle" onclick="addBuilding('{% static 'city/hospital-red.png' %}','city-house', 'gq-structure')">
+          <img src="{% static 'city/hospital-white.png' %}" class="city-button city-vehicle" onclick="addBuilding('{% static 'city/hospital-white.png' %}','city-house', 'gq-structure')">
+        </div>
+      </div>
+      <div class="city-question" id="gq-bank-prison" style="display:none">
+        <p class="question-p">What does a good town needs?</p>
+        <button type="button" class="city-button2" onclick="showQuestions(3,1,2)">Prison</button>
+        <button type="button" class="city-button2" onclick="showQuestions(3,2,2)">Bank</button>
+        <div class="city-hide" id="gami-3-1">
+          <img src="{% static 'city/prison-grey.png' %}" class="city-button city-bank-prison" style="width:80px" onclick="addBuilding('{% static 'city/prison-grey.png' %}','city-bank-prison','gq-bank-prison')">
+          <img src="{% static 'city/prison-brown.png' %}" class="city-button city-bank-prison" style="width:80px" onclick="addBuilding('{% static 'city/prison-brown.png' %}','city-bank-prison','gq-bank-prison')">
+        </div>
+        <div class="city-hide" id="gami-3-2">
+          <img src="{% static 'city/bank-grey.png' %}" class="city-button city-bank-prison" style="width:80px" onclick="addBuilding('{% static 'city/bank-grey.png' %}','city-bank-prison','gq-bank-prison')">
+          <img src="{% static 'city/bank-white.png' %}" class="city-button city-bank-prison" style="width:80px" onclick="addBuilding('{% static 'city/bank-white.png' %}','city-bank-prison','gq-bank-prison')">
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="treatment-3" style="display:none">
+    <div class="btns-container3">
+      <div class="content-container">
+        <!-- Header -->
+        <div class="content-sections-container">
+          <!-- <button type="button" onclick="goToPage(5)" name="button">q1-a</button>
+          <button type="button" onclick="goToPage(6)" name="button">q2-c</button>
+          <button type="button" onclick="goToPage(14)" name="button">q3-a-b</button>
+          <button type="button" onclick="goToPage(22)" name="button">q4-c</button> -->
+          <li class="content-tab active-tab" name="tab" id="tab-s1" onclick="goToPage(1)">Decision</li>
+          <li class="content-tab" name="tab" id="tab-s2" onclick="goToPage(7)">Labor and Production</li>
+          <li class="content-tab" name="tab" id="tab-s3" onclick="goToPage(15)">Preferences</li>
+        </div>
+        <!-- Content text / charts -->
+        <div class="panel-container">
+          <div class="panel page-hide show" id="page-1">
+            <div class="lp-title">
+              How individuals do the best they can, and how they resolve the trade-off between earnings and free time
+            </div>
+            <div class="lp-text">
+              <ul>
+                <li>Decision making under scarcity is a common problem because we usually have limited means available to meet our objectives.</li>
+                <li>Economists model these situations, first by defining all of the feasible actions, then evaluating which of these actions is best, given the objectives.</li>
+                <li>Opportunity costs describe the unavoidable trade-offs in the presence of scarcity: satisfying one objective more means satisfying other objectives less.</li>
+                <li>A model of decision making under scarcity can be applied to the question of how much time to spend working, when facing a trade-off between more free time and more income.</li>
+                <li>This model also helps to explain differences in the hours that people work in different countries, and the changes in our hours of work throughout history.</li>
+              </ul>
+              <br/>
+              <p>Imagine that you are working in New York, in a job that is paying you <strong>$15</strong> an hour for a <strong>40-hour working week</strong>, which gives you earnings of <strong>$600 per week</strong>. There are 168 hours in a week, so after 40 hours of work, you are left with 128 hours of free time for all your non-work activities, including leisure and sleep.
+                          </p>
+            </div>
+          </div>
+          <div class="panel page-hide" id="page-2">
+            <div class="lp-title">
+              Page 2
+            </div>
+            <div class="lp-text">
+              <p>
+                Suppose, by some happy stroke of luck, you are offered a job at a much higher wage—six times higher.<br/> Your new hourly wage is <strong>$90</strong>. Not only that, your prospective employer lets you choose how many hours you work each week.
+              </p>
+              <p>
+<i class="questioni">Will you carry on working 40 hours per week?</i><br/>If you do, your weekly pay will be six times higher than before: <strong>$3,600</strong>.<br/> <i class="questioni">Or will you decide that you are satisfied with the goods you can buy with your weekly earnings of $600?</i><br/>You can now earn this by cutting your weekly hours to just 6 hours and 40 minutes (a six-day weekend!), and enjoy about 26% more free time than before.<br/> <i class="questioni">Or would you use this higher hourly wage rate to raise both your weekly earnings and your free time by some intermediate amount?</i>
+              </p>
+              <p>
+The idea of suddenly receiving a six-fold increase in your hourly wage and being able to choose your own hours of work might not seem very realistic. But we know from Unit 2 that technological progress since the Industrial Revolution has been accompanied by a dramatic rise in wages. In fact, the average real hourly earnings of American workers did increase more than six-fold during the twentieth century.</p>
+<p>
+  And while employees ordinarily cannot just tell their employer how many hours they want to work, over long time periods the typical hours that we work do change. In part, this is a response to how much we prefer to work. As individuals, we can choose part-time work, although this may restrict our job options. Political parties also respond to the preferences of voters, so changes in typical working hours have occurred in many countries as a result of legislation that imposes maximum working hours.
+              </p>
+            </div>
+          </div>
+          <div class="panel page-hide" id="page-3">
+            <div class="lp-title">
+              Page 3
+            </div>
+            <div class="lp-text">
+              <p>
+                <i class="questioni">So have people used economic progress as a way to consume more goods, enjoy more free time, or both?</i><br/>
+                 The answer is both, but in different proportions in different countries. While hourly earnings increased by more than six-fold for twentieth century Americans, their average annual work time fell by a little more than one-third. So people at the end of this century enjoyed a four-fold increase in annual earnings with which they could buy goods and services, but a much smaller increase of slightly less than one-fifth in their free time. (The percentage increase in free time would be higher if you did not count time spent asleep as free time, but it is still small relative to the increase in earnings.)
+              </p>
+              <p>
+                 <i class="questioni">How does this compare with the choice you made when our hypothetical employer offered you a six-fold increase in your wage?</i><br/>
+                Figure 3.1 shows trends in income and working hours since 1870 in three countries.
+As in Unit 1, income is measured as per-capita GDP in US dollars. This is not the same as average earnings, but gives us a useful indication of average income for the purposes of comparison across countries and through time. In the late nineteenth and early twentieth century, average income approximately trebled, and hours of work fell substantially. During the rest of the twentieth century, income per head rose four-fold.
+Hours of work continued to fall in the Netherlands and France (albeit more slowly) but levelled off in the US, where there has been little change since 1960.
+              </p>
+              <div class="">
+                <div class="figure">Figure 3.1</div>
+                <img src="{% static 'images/figure-03-01.jpg' %}" style="max-width:100%">
+              </div>
+            </div>
+          </div>
+          <div class="panel page-hide" id="page-4">
+            <div class="lp-title">
+              Page 4
+            </div>
+            <div class="lp-text">
+              <p>
+While many countries have experienced similar trends, there are still differences in outcomes. Figure 3.2 illustrates the wide disparities in free time and income between countries in 2013. Here we have calculated free time by subtracting average annual working hours from the number of hours in a year. You can see that the higher-income countries seem to have lower working hours and more free time, but there are also some striking differences between them. For example, the Netherlands and the US have similar levels of income, but Dutch workers have much more free time. And the US and Turkey have similar amounts of free time but a large difference in income.
+             </p>
+              <p>
+                In many countries there has been a huge increase in living standards since 1870. But in some places people have carried on working just as hard as before but consumed more, while in other countries people now have much more free time. <br/><i class="questioni">Why has this happened?</i><br/> We will provide some answers to this question by studying a basic problem of economics—scarcity—and how we make choices when we cannot have all of everything that we want, such as goods and free time.
+  Study the model of decision making that we use carefully! It will be used repeatedly throughout the course, because it provides insight into a wide range of economic problems.
+              </p>
+              <div class="">
+                <div class="figure">Figure 3.2</div>
+                <img src="{% static 'images/figure-03-02.jpg' %}" style="max-width:100%">
+              </div>
+            </div>
+          </div>
+          <div class="panel page-hide" id="page-5">
+            <div class="lp-title">
+              Page 5 - Practice Question (1 out of 4)
+              <!-- 3.1 -->
+            </div>
+            <div class="lp-text">
+             <div class="question-container">
+               <p class="content-q">
+                 Currently you work for 40 hours per week at the wage rate of £20 an
+                 hour. Your free hours are defined as the number of hours not spent in
+                 work per week, which in this case is 24 hours × 7 days − 40 hours = 128
+                 hours per week. Suppose now that your wage rate has increased by
+                 25%. If you are happy to keep your total weekly income constant, then:
+               </p>
+               <div class="question-input">
+                 <label class="quiz-cc checkbox-container">Your total number of working hours per week will fall by 25%.
+                   <input type="radio" name="q1" id="q1-1" value="a">
+                   <span class="quiz-radio checkmark"></span>
+                 </label>
+                 <label class="quiz-cc checkbox-container">Your total number of working hours per week will be 30 hours.
+                   <input type="radio" name="q1" id="q1-2" value="b">
+                   <span class="quiz-radio checkmark"></span>
+                 </label>
+                 <label class="quiz-cc checkbox-container">Your total number of free hours per week will increase by 25%.
+                   <input type="radio" name="q1" id="q1-3" value="c">
+                   <span class="quiz-radio checkmark"></span>
+                 </label>
+                 <!-- Correct -->
+                 <label class="quiz-cc checkbox-container">Your total number of free hours per week will increase by 6.25%.
+                   <input type="radio" name="q1" id="q1-4" value="d">
+                   <span class="quiz-radio checkmark"></span>
+                 </label>
+               </div>
+               <div class="question-feedback" id="q1-feedback-correct" style="color:forestgreen;display:none">
+                 Your answer is correct!
+               </div>
+               <div class="question-feedback" id="q1-feedback-incorrect" style="color:indianred;display:none">
+                 Your answer is incorrect!
+               </div>
+               <button type="button" id="q1-btn" class="submit-question" onclick="questionCheck('q1')">Submit</button>
+               <div class="question-timer" id="q1-timer" style="display:none">
+                 You can try again in <span id="q1-seconds">5</span> seconds
+               </div>
+             </div>
+            </div>
+          </div>
+          <div class="panel page-hide" id="page-6">
+            <div class="lp-title">
+              Page 6 - Practice Question (2 out of 4)
+              <!-- 3.2 -->
+            </div>
+            <div class="lp-text">
+             <div class="question-container">
+               <div class="">
+                 <div class="figure">Figure 3.1</div>
+                 <img src="{% static 'images/figure-03-01.jpg' %}" style="max-width:100%">
+               </div>
+               <p class="content-q">
+                 Look again at Figure 3.1, which depicts the annual number of
+                  hours worked against GDP per capita in the US, France and the
+                  Netherlands, between 1870 and 2000.
+                  <br/><br/>
+                  Which of the following is true?
+               </p>
+               <div class="question-input">
+                 <label class="quiz-cc checkbox-container">An increase in GDP per capita causes a reduction in the number of hours worked.
+                   <input type="radio" name="q2" id="q2-1" value="a">
+                   <span class="quiz-radio checkmark"></span>
+                 </label>
+                 <label class="quiz-cc checkbox-container">The GDP per capita in the Netherlands is lower than that in the US
+because Dutch people work fewer hours.
+                   <input type="radio" name="q2" id="q2-2" value="b">
+                   <span class="quiz-radio checkmark"></span>
+                 </label>
+                 <label class="quiz-cc checkbox-container">Between 1870 and 2000, French people have managed to increase
+their GDP per capita more than ten-fold while more than halving
+the number of hours worked.
+                   <input type="radio" name="q2" id="q2-3" value="c">
+                   <span class="quiz-radio checkmark"></span>
+                 </label>
+                 <!-- Correct -->
+                 <label class="quiz-cc checkbox-container">On the basis of the evidence in the graph, one day French people
+will be able to produce a GDP per capita of over $30,000 with less
+than 1,000 hours of work.
+                   <input type="radio" name="q2" id="q2-4" value="d">
+                   <span class="quiz-radio checkmark"></span>
+                 </label>
+               </div>
+               <div class="question-feedback" id="q2-feedback-correct" style="color:forestgreen;display:none">
+                 Your answer is correct!
+               </div>
+               <div class="question-feedback" id="q2-feedback-incorrect" style="color:indianred;display:none">
+                 Your answer is incorrect!
+               </div>
+               <button type="button" id="q2-btn" class="submit-question" onclick="questionCheck('q2')">Submit</button>
+               <div class="question-timer" id="q2-timer" style="display:none">
+                 You can try again in <span id="q2-seconds">5</span> seconds
+               </div>
+             </div>
+            </div>
+          </div>
+          <div class="panel page-hide" id="page-7">
+            <div class="lp-title">
+              Page 7
+            </div>
+            <div class="lp-text">
+              <p>
+In Unit 2 we saw that labour can be thought of as an input in the production of goods and services. Labour is work; for example the welding, assembling, and testing required to make a car. Work activity is often difficult to measure, which is an important point in later units because employers find it difficult to determine the exact amount of work that their employees are doing. We also cannot measure the effort required by different activities in a comparable way (for example, baking a cake versus building a car), so economists often measure labour simply as the number of hours worked by individuals engaged in production, and assume that as the number of hours worked increases, the amount of goods produced also increases.
+             </p>
+              <p>
+As a student, you make a choice every day: how many hours to spend studying. There may be many factors influencing your choice: how much you enjoy your work, how difficult you find it, how much work your friends do, and so on. Perhaps part of the motivation to devote time to studying comes from your belief that the more time you spend studying, the higher the grade you will be able to obtain at the end of the course. In this unit, we will construct a simple model of a student’s choice of how many hours to work, based on the assumption that the more time spent working, the better the final grade will be.
+              </p>
+            </div>
+          </div>
+          <div class="panel page-hide" id="page-8">
+            <div class="lp-title">
+              Page 8
+            </div>
+            <div class="lp-text">
+              <p>
+At first sight there seems to be only a weak relationship between the average number of hours per week the students spent studying and their Grade Point Average (GPA) at the end of the semester. This is in Figure 3.3.
+             </p>
+              <p>
+The 84 students have been split into two groups according to their hours of study. The average GPA for those with high study time is 3.43—only just above the GPA of those with low study time.
+              </p>
+              <table>
+                <tr>
+                  <th class="th-figure-styles">Figure 3.3</th>
+                  <th class="th-styles">High study time (42 students)</th>
+                  <th class="th-styles">Low study time (42 students)</th>
+                </tr>
+                <tbody>
+                  <tr>
+                    <td class="td-styles">Average GPA (out of 4.0 GPA scale)</td>
+                    <td class="td-styles">3.43</td>
+                    <td class="td-styles">3.36</td>
+                  </tr>
+                </tbody>
+              </table>
+              <p>
+              Looking more closely, we discover this study is an interesting illustration of why we should be careful when we make ceteris paribus assumptions (remember from Unit 2 that this means ‘holding other things constant’). Within each group of 42 students there are many potentially important differences. The conditions in which they study would be an obvious difference to consider: an hour working in a busy, noisy room may not be as useful as an hour spent in the library.
+            </p>
+            </div>
+          </div>
+          <div class="panel page-hide" id="page-9">
+            <div class="lp-title">
+              Page 9
+            </div>
+            <div class="lp-text">
+              <p>
+In Figure 3.4, we see that students studying in poor environments are more likely to study longer hours. Of these <strong>42 students</strong>, 31 of them have high study time, compared with only 11 of the students with good environments. Perhaps they are distracted by other people around them, so it takes them longer to complete their assignments than students who work in the library.
+             </p>
+              <table>
+                <tr>
+                  <th class="th-figure-styles">Figure 3.4</th>
+                  <th class="th-styles">High study time (out of 4.0 GPA scale)</th>
+                  <th class="th-styles">Low study time (out of 4.0 GPA scale)</th>
+                </tr>
+                <tbody>
+                  <tr>
+                    <td class="td-styles">Good environment</td>
+                    <td class="td-styles">3.63 (11 students)</td>
+                    <td class="td-styles">3.43 (31 students)</td>
+                  </tr>
+                  <tr>
+                    <td class="td-styles">Poor environment</td>
+                    <td class="td-styles">3.36 (31 students)</td>
+                    <td class="td-styles">3.17 (11 students)</td>
+                  </tr>
+                </tbody>
+              </table>
+              <p>
+Now look at the average GPAs in the top row: if the environment is good, students who study longer do better—and you can see in the bottom row that high study time pays off for those who work in poor environments too. This relationship was not as clear when we didn’t consider the effect of the study environment.
+            </p>
+            <p>
+              So, after taking into account environment and other relevant factors (including the students’ past GPAs, and the hours they spent in paid work or partying), the psychologists estimated that an additional hour of study time per week raised a student’s GPA at the end of the semester by 0.24 points on average. If we take two students who are the same in all respects except for study time, we predict that the one who studies for longer will have a GPA that is
+  0.24 points higher for each extra hour: study time raises GPA by 0.24 per hour, ceteris paribus.
+            </p>
+            </div>
+          </div>
+          <div class="panel page-hide" id="page-10">
+            <div class="lp-title">
+              Page 10
+            </div>
+            <div class="lp-text">
+              <!-- <img src="{% static 'images/figure-03-05-a.jpg' %}" style="max-width:400px"> -->
+              <div style="width:80%;height:400px;max-width:900px;">
+                <canvas id="canvas-p8" width="300" height="300"></canvas>
+              </div>
+              <div>
+                This is Alexei’s
+                  <span id="popup1" class="clickable-word">production function</span>
+                : it translates the number of hours per day spent studying (his input of labour) into a percentage grade (his output). In reality, the final grade might also be affected by unpredictable events (in everyday life, we normally lump the effect of these things together and call it ‘luck’). You can think of the production function as telling us what Alexei will get under normal conditions (if he is neither lucky nor unlucky).
+                If we plot this relationship on a graph, we get the curve in Figure 3.5. Alexei can achieve a higher grade by studying more, so the curve slopes upward. At 15 hours of work per day he gets the highest grade he is capable of, which is 90%. Any time spent studying beyond that does not affect his exam result (he will be so tired that studying more each day will not achieve anything), and the curve becomes flat.
+              </div>
+              <div>
+                <br/>
+                We can calculate Alexei’s average product of labour, as we did for the farmers in Unit 2. If he works for 4 hours per day, he achieves a grade of 50.
+                <br/>The
+                  <span class="clickable-word" id="popup2">average product</span>
+                —the average number of percentage points per hour of study—is <strong>50 / 4 = 12.5</strong>. In Figure 3.5 it is the slope of a ray from the origin to the curve at 4 hours per day:
+              </div>
+              <img src="{% static 'images/slope-formula.jpg' %}" style="max-width:100%">
+            </div>
+          </div>
+          <div class="panel page-hide" id="page-11">
+            <div class="lp-title">
+              Page 11
+            </div>
+            <div class="lp-text">
+              <p>
+                Alexei’s
+                  <span class="clickable-word" id="popup3">marginal product</span>
+                is the increase in his grade from increasing study time by one hour. Follow the steps in Figure 3.5 to see how to calculate the marginal product, and compare it with the average product.
+              </p>
+              <!-- <img src="{% static 'images/figure-03-05-i.jpg' %}" style="max-width:800px"> -->
+              <div class="figure">Figure 3.5</div>
+              <div style="width:80%;height:500px;max-width:900px;">
+                <canvas id="canvas-p9" width="300" height="300"></canvas>
+              </div>
+              <table style="width:100%">
+                <tr>
+                  <td class="td-styles">Study hours</td><td class="td-styles">0</td><td class="td-styles">1</td><td class="td-styles">2</td><td class="td-styles">3</td><td class="td-styles">4</td><td class="td-styles">5</td><td class="td-styles">6</td><td class="td-styles">7</td><td class="td-styles">8</td><td class="td-styles">9</td><td class="td-styles">10</td><td class="td-styles">11</td><td class="td-styles">12</td><td class="td-styles">13</td><td class="td-styles">14</td><td class="td-styles">15 or more</td>
+                </tr>
+                <tr>
+                  <td class="td-styles">Grade</td><td class="td-styles">0</td><td class="td-styles">20</td><td class="td-styles">33</td><td class="td-styles">42</td><td class="td-styles">50</td><td class="td-styles">57</td><td class="td-styles">63</td><td class="td-styles">69</td><td class="td-styles">74</td><td class="td-styles">78</td><td class="td-styles">81</td><td class="td-styles">84</td><td class="td-styles">86</td><td class="td-styles">88</td><td class="td-styles">89</td><td class="td-styles">90</td>
+                </tr>
+              </table>
+              <p>
+                At each point on the production function, the marginal product is the increase in the grade from studying one more hour. The marginal product corresponds to the slope of the production function.
+              </p>
+              <p>
+                Alexei’s production function in Figure 3.5 gets flatter the more hours he studies, so the marginal product of an additional hour falls as we move along the curve.
+                <br/>The marginal product is
+                  <span class="clickable-word" id="popup4">diminishing</span>
+              . The model captures the idea that an extra hour of study helps a lot if you are not studying much, but if you are already studying a lot, then studying even more does not help very much.
+              </p>
+            </div>
+          </div>
+          <div class="panel page-hide" id="page-12">
+            <div class="lp-title">
+              Page 12
+            </div>
+            <div class="lp-text">
+              <!-- <img src="{% static 'images/figure-03-05-i.jpg' %}" style="max-width:400px"> -->
+              <div class="figure">Figure 3.5</div>
+              <div style="width:80%;height:400px;max-width:900px;">
+                <canvas id="canvas-p10" width="300" height="300"></canvas>
+              </div>
+              <p>
+In Figure 3.5, output increases as the input increases, but the marginal product falls—the function becomes gradually flatter.
+<br/>A production function with this shape is described as
+  <span class="clickable-word" id="popup5">concave</span>
+.
+              </p>
+              <p>
+                If we compare the marginal and average products at any point on Alexei’s production function, we find that the marginal product is below the average product.
+                For example, when he works for four hours his average product is <strong>50/4 = <span style="color:darkblue">12.5</span></strong> points per hour, but an extra hour’s work raises his grade from 50 to 57, so the marginal product is <strong><span style="color:darkviolet">7</span></strong>. This happens because the marginal product is diminishing: each hour is less productive than the ones that came before. And it implies that the average product is also diminishing: each additional hour of study per day lowers the average product of all his study time, taken as a whole.
+              </p>
+              <p>
+                Lastly, notice that if Alexei was already studying for 15 hours a day, the marginal product of an additional hour would be zero.
+                Studying more would not improve his grade. As you might know from experience, a lack of either sleep or time to relax could even lower Alexei’s grade if he worked more than 15 hours a day. If this were the case, then his production function would start to slope downward, and Alexei’s marginal product would become negative.
+              </p>
+            </div>
+          </div>
+          <div class="panel page-hide" id="page-13">
+            <div class="lp-title">
+              Page 13 - MARGINAL PRODUCT
+            </div>
+            <div class="lp-text">
+              <p>
+Marginal change is an important and common concept in economics. You will often see it marked as a slope on a diagram. With a production function like the one in Figure 3.5, the slope changes continuously as we move along the curve. We have said that when Alexei studies for 4 hours a day the marginal product is 7, the increase in the grade from one more hour of study. Because the slope of the curve changes between 4 and 5 hours on the horizontal axis, this is only an approximation to the actual marginal product. More precisely, the marginal product is the rate at which the grade increases, per hour of additional study. In Figure 3.5 the true marginal product is the slope of the
+  <span class="clickable-word" id="popup6">tangent</span>
+ to the curve at 4 hours. In this unit, we will use approximations so that we can work in whole numbers, but you may notice that sometimes these numbers are not quite the same as the slopes.
+              </p>
+              <img src="{% static 'images/marginal-product-formula.jpg' %}" style="max-width:400px">
+              <p>
+The marginal product is the rate of change of the grade at 4 hours of study. Suppose Alexei has been studying for 4 hours a day, and studies for 1 minute longer each day (a total of 4.016667 hours). Then, according to the graph, his grade will rise by a very small amount—about 0.124. A more precise estimate of the marginal product (the rate of change) would be:
+              </p>
+              <p>
+If we looked at smaller changes in study time even further (the rise in grade for each additional second of study per day, for example) we would get closer to the true marginal product, which is the slope of the tangent to the curve at 4 hours of study.
+              </p>
+            </div>
+          </div>
+          <div class="panel page-hide" id="page-14">
+            <div class="lp-title">
+              Page 14 - Practice Question (3 out of 4)
+            </div>
+            <div class="lp-text">
+             <div class="question-container">
+               <img src="{% static 'images/figure-03-05-i.jpg' %}" style="max-width:750px">
+               <p class="content-q">
+                 Figure 3.5 shows Alexei’s production function, with the final
+                  grade (the output) related to the number of hours spent studying (the
+                  input).
+                  <br/><br/>
+                  Which of the following is true?
+               </p>
+               <div class="question-input">
+                 <label class="quiz-cc checkbox-container">The marginal product and average product are approximately the same for the initial hour.
+                   <input type="checkbox" id="q3-1" value="a">
+                   <span class="quiz-checkmark checkmark"></span>
+                 </label>
+                 <label class="quiz-cc checkbox-container"> The marginal product and the average product are both constant beyond 15 hours.
+                   <input type="checkbox" id="q3-2" value="b">
+                   <span class="quiz-checkmark checkmark"></span>
+                 </label>
+                 <label class="quiz-cc checkbox-container">The horizontal production function beyond 15 hours means that studying for more than 15 hours is detrimental to Alexei’s performance.
+                   <input type="checkbox" id="q3-3" value="c">
+                   <span class="quiz-checkmark checkmark"></span>
+                 </label>
+                 <!-- Correct -->
+                 <label class="quiz-cc checkbox-container">The marginal product and the average product at 20 hours are both 4.5.
+                   <input type="checkbox" id="q3-4" value="d">
+                   <span class="quiz-checkmark checkmark"></span>
+                 </label>
+               </div>
+               <div class="question-feedback" id="q3-feedback" style="display: none">
+                 You got <span id="q3-correct"></span> correct, and <span id="q3-incorrect"></span> incorrect.
+               </div>
+               <button type="button" id="q3-btn" class="submit-question" onclick="questionCheck('q3')">Submit</button>
+               <div class="question-timer" id="q3-timer" style="display:none">
+                 You can try again in <span id="q3-seconds">5</span> seconds
+               </div>
+             </div>
+            </div>
+          </div>
+          <div class="panel page-hide" id="page-15">
+            <div class="lp-title">
+              Page 15 - 3.2 Preferences
+            </div>
+            <div class="lp-text">
+              <p>
+<i class="questioni">If Alexei has the production function shown in Figure 3.5, how many hours per day will he choose to study?</i> The decision depends on his
+  <span class="clickable-word" id="popup7">preferences</span>
+—the things that he cares about. If he cared only about grades, he should study for 15 hours a day. But, like other people, Alexei also cares about his free time—he likes to sleep, go out or watch TV. So he faces a trade-off: <i class="questioni">how many percentage points is he willing to give up in order to spend time on things other than study?</i>
+We illustrate his preferences using Figure 3.6, with free time on the horizontal axis and final grade on the vertical axis. Free time is defined as all the time that he does not spend studying. Every point in the diagram represents a different combination of free time and final grade. Given his production function, not every combination that Alexei would want will be possible, but for the moment we will only consider the combinations that he would prefer.
+              </p>
+              <p>
+We can assume:
+              </p>
+              <ul>
+                <ol>
+                  For a given grade, he prefers a combination with more free time to one with less free time. Therefore, even though both A and B in Figure 3.6 correspond to a grade of 84, Alexei prefers A because it gives him more free time.
+                </ol>
+                <ol>
+                  Similarly, if two combinations both have 20 hours of free time, he prefers the one with a higher grade.
+                </ol>
+                <ol>
+                  But compare points A and D in the table. <i class="questioni">Would Alexei prefer D (low grade, plenty of time) or A (higher grade, less time)?</i> One way to find out would be to ask him.
+                </ol>
+              </ul>
+              <p>
+Suppose he says he is indifferent between A and D, meaning he would feel equally satisfied with either outcome. We say that these two outcomes would give Alexei the same
+  <span class="clickable-word" id="popup8">utility</span>
+              </p>
+              <p>
+                And we know that he prefers A to B, so B provides lower utility than A or D.
+  A systematic way to graph Alexei’s preferences would be to start by looking for all of the combinations that give him the same utility as A and D. We could ask Alexei another question: ‘Imagine that you could have the combination at A (15 hours of free time, 84 points). <i class="questioni">How many points would you be willing to sacrifice for an extra hour of free time?</i> Suppose that after due consideration, he answers ‘nine’. Then we know that he is indifferent between A and E (16 hours, 75 points). Then we could ask the same question about combination E, and so on until point D. Eventually we could draw up a table like the one in Figure 3.6. Alexei is indifferent between A and E, between E and F, and so on, which means he is indifferent between all of the combinations from A to D.
+</p>
+            </div>
+          </div>
+          <div class="panel page-hide" id="page-16">
+            <div class="lp-title">
+              Page 16 -
+            </div>
+            <div class="lp-text">
+              <p>
+The combinations in the table are plotted in Figure 3.6, and joined together to form a downward-sloping curve,
+called an
+  <span class="clickable-word" id="popup9">indifference curve</span>
+, which joins together all of the combinations that provide equal utility or ‘satisfaction’.
+              </p>
+              <div class="">
+                <div class="figure">Figure 3.6</div>
+                <img src="{% static 'images/figure-03-06-g.jpg' %}" style="max-width:100%">
+              </div>
+              <p>
+              If you look at the three curves drawn in Figure 3.6, you can see that the one through A gives higher utility than the one through B. The curve through C gives the lowest utility of the three. To describe preferences we don’t need to know the exact utility of each option; we only need to know which combinations provide more or less utility than others.
+              </p>
+              <p>
+                The curves we have drawn capture our typical assumptions about people’s preferences between two goods. In other models, these will often be
+                  <span class="clickable-word" id="popup10">consumption goods</span>
+                 such as food or clothing, and we refer to the person as a consumer. In our model of a student’s preferences, the goods are ‘final grade’ and ‘free time’. Notice that:
+              </p>
+              <ul>
+                <ol>
+                  Indifference curves slope downward due to trade-offs: If you are indifferent between two combinations, the combination that has more of one good must have less of the other good.
+                </ol>
+                <ol>
+                  Higher indifference curves correspond to higher utility levels: As we move up and to the right in the diagram, further away from the origin, we move to combinations with more of both goods.
+                </ol>
+                <ol>
+                  Indifference curves are usually smooth: Small changes in the amounts of goods don’t cause big jumps in utility.
+                </ol>
+                <ol>
+                  <strong>Indifference curves do not cross</strong>
+                </ol>
+                <ol>
+                  As you move to the right along an indifference curve, it becomes flatter.
+                </ol>
+              </ul>
+
+            </div>
+          </div>
+          <div class="panel page-hide" id="page-17">
+            <div class="lp-title">
+              Page 17 -
+            </div>
+            <div class="lp-text">
+              <div class="">
+                <div class="figure">Figure 3.7</div>
+                <img src="{% static 'images/figure-03-06-g.jpg' %}" style="max-width:100%">
+              </div>
+              <p>
+To understand the last property in the list, look at Alexei’s indifference curves, which are plotted again in Figure 3.7. If he is at A, with 15 hours of free time and a grade of 84, he would be willing to sacrifice 9 percentage points for an extra hour of free time, taking him to E (remember that he is indifferent between A and E).
+<br/>We say that his
+  <span class="clickable-word" id="popup11">marginal rate of substitution (MRS)</span>
+ between grade points and free time at A is nine; it is the reduction in his grade that would keep Alexei’s utility constant following a one-hour increase of free time.
+              </p>
+              <p>
+We have drawn the indifference curves as becoming gradually flatter because it seems reasonable to assume that the more free time and the lower the grade he has, the less willing he will be to sacrifice further percentage points in return for free time, so his MRS will be lower. In Figure 3.7 we have calculated the MRS at each combination along the indifference curve. You can see that, when Alexei has more free time and a lower grade, the MRS—the number of percentage points he would give up to get an extra hour of free time—gradually falls.
+              </p>
+
+            </div>
+          </div>
+          <div class="panel page-hide" id="page-18">
+            <div class="lp-title">
+              Page 18 -
+            </div>
+            <div class="lp-text">
+              <div class="">
+                <div class="figure">Figure 3.5</div>
+                <img src="{% static 'images/figure-03-06-g.jpg' %}" style="max-width:100%">
+              </div>
+              <p>
+                The MRS is just the slope of the indifference curve, and it falls as we move to the right along the curve. If you think about moving from one point to another in Figure 3.7, you can see that the indifference curves get flatter if you increase the amount of free time, and steeper if you increase the grade. When free time is scarce relative to grade points, Alexei is less willing to sacrifice an hour for a higher grade: his MRS is high and his indifference curve is steep.
+              </p>
+              <p>
+                As the analysis in Figure 3.7 shows, if you move up the vertical line through 15 hours, the indifference curves get steeper: the MRS increases. For a given amount of free time, Alexei is willing to give up more grade points for an additional hour when he has a lot of points compared to when he has few (for example, if he was in danger of failing the course). By the time you reach A, where his grade is 84, the MRS is high; grade points are so plentiful here that he is willing to give up 9 percentage points for an extra hour of free time.
+              </p>
+              <p>
+                You can see the same effect if you fix the grade and vary the amount of free time. If you move to the right along the horizontal line for a grade of 54, the MRS becomes lower at each indifference curve. As free time becomes more plentiful, Alexei becomes less and less willing to give up grade points for more time.
+              </p>
+            </div>
+          </div>
+          <div class="panel page-hide" id="page-19">
+            <div class="lp-title">
+              Page 19 -
+            </div>
+            <div class="lp-text">
+              <p>
+Alexei faces a dilemma: we know from looking at his preferences that he wants both his grade and his free time to be as high as possible. But given his production function, he cannot increase his free time without getting a lower grade in the exam. Another way of expressing this is to say that free time has an
+  <span class="clickable-word" id="popup12">opportunity cost</span>
+: to get more free time, Alexei has to forgo the opportunity of getting a higher grade.
+In economics, opportunity costs are relevant whenever we study individuals choosing between alternative and mutually exclusive courses of action. When we consider the cost of taking action A we include the fact that if we do A, we cannot do B. So ‘not doing B’ becomes part of the cost of doing A. This is called an opportunity cost because doing A means forgoing the opportunity to do B.
+              </p>
+              <p>
+Imagine that an accountant and an economist have been asked to report the cost of going to a concert, A, in a theatre, which has a $25 admission cost. In a nearby park there is concert B, which is free but happens at the same time.
+              </p>
+              <div class="">
+                <div style="margin-bottom:5px;">
+                  <button class="accountant-btn" id="ae-1-accountant-btn" onclick="aeexample(1,'accountant')" style="background:#fff3e4;">ACCOUNTANT</button>
+                  <button class="economist-btn" id="ae-1-economist-btn" onclick="aeexample(1,'economist')">ECONOMIST</button>
+                </div>
+                <div class="accountant-example" id="ae-1-accountant">
+                  The cost of concert A is your ‘out-of-pocket’ cost: you paid $25 for a ticket, so the cost is $25.
+                </div>
+                <div class="economist-example" id="ae-1-economist" style="display:none">
+                  <i class="questioni">But what do you have to give up to go to concert A?</i><br/>You give up $25, plus the enjoyment of the free concert in the park. So the cost of concert A for you is the out-of-pocket cost plus the opportunity cost.
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="panel page-hide" id="page-20">
+            <div class="lp-title">
+              Page 20 -
+            </div>
+            <div class="lp-text">
+              <p>
+Suppose that the most you would have been willing to pay to attend the free concert in the park (if it wasn’t free) was $15. The benefit of your next best alternative to concert A would be $15 of enjoyment in the park. This is the opportunity cost of going to concert A.
+              </p>
+              <p>
+So the total
+  <span class="clickable-word" id="popup13">economic cost</span>
+ of concert A is <strong>$25 + $15 = $40</strong>. If the pleasure you anticipate from being at concert A is greater than the economic cost, say $50, then you will forego concert B and buy a ticket to the theatre. On the other hand, if you anticipate $35 worth of pleasure from concert A, then the economic cost of $40 means you will not choose to go to the theatre. In simple terms, given that you have to pay $25 for the ticket, you will instead opt for concert B, pocketing the $25 to spend on other things and enjoying $15 worth of benefit from the free park concert.
+<br/><i class="questioni">Why don’t accountants think this way?</i> <br/>
+Because it is not their job. Accountants are paid to keep track of money, not to provide decision rules on how to choose among alternatives,
+some of which do not have a stated price. But making sensible decisions and predicting how sensible people will make decisions involve more than keeping track of money. An accountant might argue that the park concert is irrelevant:
+              </p>
+                <div class="">
+                  <div style="margin-bottom:5px;">
+                    <button class="accountant-btn" id="ae-2-accountant-btn" onclick="aeexample(2,'accountant')" style="background:#fff3e4;">ACCOUNTANT</button>
+                    <button class="economist-btn" id="ae-2-economist-btn" onclick="aeexample(2,'economist')">ECONOMIST</button>
+                  </div>
+                  <div class="accountant-example" id="ae-2-accountant">
+                    Whether or not there is a free park concert does not affect the cost of going to the concert A. The cost to you is always $25.
+                  </div>
+                  <div class="economist-example" id="ae-2-economist" style="display:none">
+                    But whether or not there is a free park concert can affect whether you go to concert A or not, because it changes your available options. If your enjoyment from A is $35 and your next best alternative is staying at home, with enjoyment of $0, you will choose concert A. However, if concert B is available, you will choose it over A.
+                  </div>
+                </div>
+            </div>
+          </div>
+          <div class="panel page-hide" id="page-21">
+            <div class="lp-title">
+              Page 21 -
+            </div>
+            <div class="lp-text">
+              <p>
+In Unit 2, we said that if an action brings greater net benefits than the next best alternative, it yields an
+  <span class="clickable-word" id="popup14">economic rent</span>
+ and you will do it. Another way of saying this is that you receive an economic rent from taking an action when it results in a benefit greater than its economic cost (the sum of out-of-pocket and opportunity costs).
+The table in Figure 3.8 summarizes the example of your choice of which concert to attend.
+              </p>
+              <table>
+                <tr>
+                  <th class="th-figure-styles">Figure 3.8</th>
+                  <th class="th-styles">A high value on the theatre choice (A)</th>
+                  <th class="th-styles">A low value on the theatre choice (A)</th>
+                </tr>
+                <tbody>
+                  <tr>
+                    <td class="td-styles" style="text-align: left;">Out-of-pocket cost (price of ticket for A)</td>
+                    <td class="td-styles">$25</td>
+                    <td class="td-styles">$25</td>
+                  </tr>
+                  <tr>
+                    <td class="td-styles" style="text-align: left;">Opportunity cost (foregone pleasure of B, park concert)</td>
+                    <td class="td-styles">$15</td>
+                    <td class="td-styles">$15</td>
+                  </tr>
+                  <tr>
+                    <td class="td-styles" style="text-align: left;">Economic cost (sum of out-of-pocket and opportunity cost)</td>
+                    <td class="td-styles">$40</td>
+                    <td class="td-styles">$40</td>
+                  </tr>
+                  <tr>
+                    <td class="td-styles" style="text-align: left;">Enjoyment of theatre concert (A)</td>
+                    <td class="td-styles">$50</td>
+                    <td class="td-styles">$35</td>
+                  </tr>
+                  <tr>
+                    <td class="td-styles" style="text-align: left;">Economic rent (enjoyment minus economic cost)</td>
+                    <td class="td-styles">$10</td>
+                    <td class="td-styles">-$5</td>
+                  </tr>
+                  <tr>
+                    <td class="td-styles" style="text-align: left;">Decision</td>
+                    <td class="td-styles">A: Go to the theatre concert</td>
+                    <td class="td-styles">B: Go to the park concert</td>
+                  </tr>
+
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="panel page-hide" id="page-22">
+            <div class="lp-title">
+              Page 22 - Practice Question (4 out of 4)
+            </div>
+            <div class="lp-text">
+             <div class="question-container">
+               <p class="content-q">
+                 You are a taxi driver in Melbourne who earns A$50 for a day’s work.
+                  You have been offered a one-day ticket to the Australian Open for
+                  A$40. As a tennis fan, you value the experience at A$100.
+                  <br/><br/>
+                  With this information, what can we say?
+               </p>
+               <div class="question-input">
+                 <label class="quiz-cc checkbox-container">The opportunity cost of the day at the Open is A$40.
+                   <input type="radio" name="q4" id="q4-1" value="a">
+                   <span class="quiz-radio checkmark"></span>
+                 </label>
+                 <label class="quiz-cc checkbox-container">The economic cost of the day at the Open is A$40.
+                   <input type="radio" name="q4" id="q4-2" value="b">
+                   <span class="quiz-radio checkmark"></span>
+                 </label>
+                 <!-- Correct -->
+                 <label class="quiz-cc checkbox-container">The economic rent of the day at the Open is A$10.
+                   <input type="radio" name="q4" id="q4-3" value="c">
+                   <span class="quiz-radio checkmark"></span>
+                 </label>
+                 <label class="quiz-cc checkbox-container">You would have paid up to A$100 for the ticket.
+                   <input type="radio" name="q4" id="q4-4" value="d">
+                   <span class="quiz-radio checkmark"></span>
+                 </label>
+               </div>
+               <div class="question-feedback" id="q4-feedback-correct" style="color:forestgreen;display:none">
+                 Your answer is correct!
+               </div>
+               <div class="question-feedback" id="q4-feedback-incorrect" style="color:indianred;display:none">
+                 Your answer is incorrect!
+               </div>
+               <button type="button" id="q4-btn" class="submit-question" onclick="questionCheck('q4')">Submit</button>
+               <div class="question-timer" id="q4-timer" style="display:none">
+                 You can try again in <span id="q4-seconds">5</span> seconds
+               </div>
+             </div>
+             <div class="last-page-note">
+               You reached the last page, you may go back and review again the questions or other parts of the content until the <span style="color:black">30 minutes</span> are over!
+             </div>
+            </div>
+          </div>
+
+
+          <!-- Buttons -->
+          <div class="content-btn-cont">
+            <button type="button" class="content-next-back" id="content-back" style="visibility:hidden" onclick="changePage(-1)">Back</button>
+            <button type="button" class="content-next-back" id="content-next" onclick="changePage(1)">Next</button>
+          </div>
+
+          <!-- <div class="right-panel"> -->
+            <!-- <canvas id="canvas" class="canvas-style"></canvas> -->
+          <!-- </div> -->
+        </div>
+        <div class="question_number">
+          Page <span id="page_number">1</span> / 22
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div id="quiz_access" style="display:none"></div>
+</div>
+<!-- <script type="text/javascript"> -->
+<!-- var sim = null; -->
+<!-- </script> -->
+<!-- <script src="{% static 'js/ppcmodule.js' %}" charset="utf-8"></script> -->
+<script src="{% static 'js/gamification.js' %}" charset="utf-8"></script>
+<script src="{% static 'js/content.js' %}" charset="utf-8"></script>
+<script>
+  if ('{{content_time}}' !== "") {
+    var django_content_time = Date.parse('{{content_time.isoformat }}')
+    if ('{{duration}}' !== "") {
+      duration = {{duration}}
+    }
+    let timer_content = new CountDownTimer(document.getElementById("content_timer"), django_content_time, duration, em = function(){window.location.href="{% url 'quiz' %}"});
+  }
+
+  function goToQuiz(){
+    window.location.href = "{% url 'quiz' %}"
+  }
+
+  function closet4message() {
+    document.getElementById('t4-message').style.display = "none"
+    document.getElementById('t4-tutorial-container').style.display = "none"
+    document.getElementById('t4-overlay').style.display = "none"
+  }
+
+  var url_access = "{% url 'lab_get_access' %}"
+  var code_id = "{{request.session.code}}"
+  var quizaccess = setInterval(async function() {
+    let quiz = document.getElementById('quiz_access').innerHTML
+    if (quiz === "true") {
+      clearInterval(quizaccess);
+      // document.getElementById('gotoQuiz-btn').style.display = "block";
+      countdown_redirect('content-timer-container','content-timer',"{% url 'quiz' %}")
+    }
+    console.log('loop');
+    lab_access('quiz')
+    console.log(document.getElementById('quiz_access').innerHTML)
+  }, 20000);
+
+  let group = '{{request.session.group}}'
+  if (group !== "") {
+    document.getElementById('treatment-'+group).style.display = 'block'
+    if (group === "4") {
+      document.getElementById('treatment-3').style.display = 'block'
+    }
+  }
+  var tree = "darkgreen"
+  var file = "{% static 'pdf/Content-CoreEcon.pdf' %}"
+  file= encodeURIComponent(file)
+  var pdf = "{% static 'pdf-viewer/web/viewer.html' %}" + '?file=' + file
+  // document.getElementById("pdf1").href = pdf
+  document.getElementById("pdf2").src = pdf
+</script>
+<script src="{% static 'js/chart.js' %}" charset="utf-8"></script>
+{% endblock %}

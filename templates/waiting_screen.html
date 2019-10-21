@@ -1,0 +1,100 @@
+{% extends 'site.html' %}
+
+{% block content %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/pacman_wait.css' %}">
+<div>
+  <!-- Header with image-->
+  <div style="background: url('{% static 'images/book.jpg' %}')" class="smaller-image home-image">
+    <div class="smaller-image home-image-layer">
+      <div class="home-title">
+        Wait please...
+      </div>
+    </div>
+  </div>
+
+  <div class="consent-text">
+    <p>
+      Other participants need more time. The next step will continue shortly.
+    </p>
+    <div class="col-md-2 loader5">
+      <div class="loader-wrapper d-flex justify-content-center align-items-center">
+        <div class="loader">
+          <div class="pacman">
+          <div></div><div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div></div>
+      </div>
+    </div>
+    <!-- <button type="button" class="normal-btn disabled-btn" id="access-continue" onclick="goToContent()" disabled>Continue</button> -->
+    <div class="redirect-container" id="wait-timer-container" style="display:none">
+      <div class="redirect-message">
+        You will be redirected in
+      </div>
+      <div class="redirect-seconds" id="wait-timer">5</div>
+    </div>
+  </div>
+  <div id="group" style="display:none"></div>
+  <div id="content_access" style="display:none"></div>
+  <form id="form" method="get" style="display:none">{% csrf_token %}}</form>
+
+
+
+<script type="text/javascript">
+  var seshid = '{{request.session.key_copy}}'
+  var url_group = "{% url 'lab_get_group' %}"
+  var url_content = "{% url 'content' %}"
+  var url_access = "{% url 'lab_get_access' %}"
+  var code_id = "{{request.session.code}}"
+
+function goToContent() {
+  window.location.href = url_content
+}
+
+ // Runs an ajax every 5 seconds to check if group has been assigned
+ if ('{{request.session.group}}' === "") {
+   var getgroup = setInterval(async function() {
+     let group = document.getElementById('group').innerHTML
+     console.log(group, '{{request.session.group}}')
+     if (group !== "") {
+       clearInterval(getgroup);
+       console.log('submit form')
+       let form = document.getElementById("form");
+       form.submit()
+     }
+     console.log('loop');
+     lab_group()
+     console.log(document.getElementById('content_access').innerHTML)
+   }, 1000);
+ }
+
+// Runs an ajax every 5 seconds to check if access to content has been granted
+ var getaccess = setInterval(async function() {
+   console.log('loop2');
+   lab_access('content')
+   let access = document.getElementById('content_access').innerHTML
+   if (access === "true") {
+       clearInterval(getaccess);
+       if ('{{request.session.group}}' !== "") {
+         // document.getElementById("access-continue").classList.remove('disabled-btn')
+         // document.getElementById("access-continue").disabled = false;
+         countdown_redirect('wait-timer-container','wait-timer',"{% url 'content' %}")
+       }
+   }
+   console.log(document.getElementById('content_access').innerHTML)
+}, 1000);
+
+</script>
+</div>
+{% endblock %}

@@ -1,0 +1,40 @@
+
+@media only screen and (max-width: 600px) {
+
+
+  .home-title {
+    font-size: 35px;
+  }
+
+  .home-input {
+    font-size: 20px;
+  }
+
+  .home-input-button {
+    margin-left: 5px !important;
+  }
+
+  .consent-text {
+    font-size: 25px;
+  }
+
+  .normal-btn {
+    margin: 5px 0;
+    height: 45px;
+    font-size: 25px;
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+}

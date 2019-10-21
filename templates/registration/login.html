@@ -1,0 +1,18 @@
+{% extends 'site.html' %}
+
+{% block content %}
+{% load static %}
+
+
+<div style="margin: 100px 20%;text-align:center">
+  <h2>Login</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Login</button>
+  </form>
+</div>
+
+
+
+{% endblock %}

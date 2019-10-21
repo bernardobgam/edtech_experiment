@@ -1,0 +1,354 @@
+{% extends 'site.html' %}
+
+{% block content %}
+{% load static %}
+<div>
+  <!-- Researcher Controls -->
+  {% if user.is_authenticated %}
+  <div class="researcher-buttons">
+    <a class="btn-left r-btn" href="{% url 'quiz' %}"><span>&#60;</span> Back</a>
+    <div class="r-title">Researcher Controls</div>
+    <a class="btn-right r-btn" href="{% url 'home' %}">Next <span>&#62;</span></a>
+  </div>
+  {% endif %}
+
+  <!-- Header with image-->
+  <div style="background: url('{% static 'images/book.jpg' %}')" class="smaller-image home-image">
+    <div class="smaller-image home-image-layer">
+      <div class="home-title">
+        Survey
+      </div>
+    </div>
+  </div>
+
+  <div class="btns-container2">
+    <form name="survey" id="survey-form" method="post">
+      {% csrf_token %}
+
+    <!-- Question -->
+    <div style="font-size:20px">
+      The survey has 3 sections. Please fill carefully. This survey was designed to be easy to fill up.<br><br>
+      Input boxes that ask for number figures will only accept numbers (No letters can be typed).
+    </div>
+    <div id="survey_section_1">
+      <h2>Section 1</h2>
+      <!-- <div class="question-container">
+        <p class="content-q">
+          <br/>
+           1. What is the most recent degree that you are studying or have completed? (Full Title)
+           <br><br>
+           <span class="survey_note">If not studying any degree type N/A</span>
+        </p>
+        <div class="question-input">
+          <input type="text" name="survey_1" class="consent-input" value="">
+        </div>
+      </div>
+
+      <div class="question-container">
+        <p class="content-q">
+          <br/>
+           2. What year of university study are you in? (Only a number)
+           <br><br>
+           <span class="survey_note">Input 0 if you are not studying.</span> <br>
+           <span class="survey_note">If you already graduated input the amout of years you studied</span>
+        </p>
+        <div class="question-input">
+          <input type="text" name="survey_1" class="consent-input" value="">
+        </div>
+      </div>
+
+      <div class="question-container">
+        <p class="content-q">
+          <br/>
+           3. What is your gender?
+        </p>
+        <div class="question-input">
+          <label class="quiz-cc checkbox-container">Female
+            <input type="radio" name="survey_3" id="q3-1" value="Female">
+            <span class="quiz-radio checkmark"></span>
+          </label>
+          <label class="quiz-cc checkbox-container">Male
+            <input type="radio" name="survey_3" id="q3-2" value="Male">
+            <span class="quiz-radio checkmark"></span>
+          </label>
+          <label class="quiz-cc checkbox-container">Other
+            <input type="radio" name="survey_3" id="q3-3" value="Other">
+            <span class="quiz-radio checkmark"></span>
+          </label>
+          <label class="quiz-cc checkbox-container">Prefer not to say
+            <input type="radio" name="survey_3" id="q3-3" value="Prefer not to say">
+            <span class="quiz-radio checkmark"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="question-container">
+        <p class="content-q">
+          <br/>
+           4. What is your age? (Only a number)
+        </p>
+        <div class="question-input">
+          <input type="text" name="survey_4" class="consent-input" value="">
+        </div>
+      </div>
+
+      <div class="question-container">
+        <p class="content-q">
+          <br/>
+           5. Have you studied economics before?
+        </p>
+        <div class="question-input">
+          <label class="quiz-cc checkbox-container">Yes
+            <input type="radio" name="survey_5" id="q5-1" value="a">
+            <span class="quiz-radio checkmark"></span>
+          </label>
+          <label class="quiz-cc checkbox-container">No
+            <input type="radio" name="survey_5" id="q5-2" value="b">
+            <span class="quiz-radio checkmark"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="question-container">
+        <p class="content-q">
+          <br/>
+           6. If you have studied economics before, at what level?
+        </p>
+        <div class="question-input">
+          <label class="quiz-cc checkbox-container">High School
+            <input type="radio" name="survey_6" id="q6-1" value="a">
+            <span class="quiz-radio checkmark"></span>
+          </label>
+          <label class="quiz-cc checkbox-container">University - Introductory
+            <input type="radio" name="survey_6" id="q6-2" value="b">
+            <span class="quiz-radio checkmark"></span>
+          </label>
+          <label class="quiz-cc checkbox-container">University - Intermediate
+            <input type="radio" name="survey_6" id="q6-2" value="b">
+            <span class="quiz-radio checkmark"></span>
+          </label>
+          <label class="quiz-cc checkbox-container">University - Advanced
+            <input type="radio" name="survey_6" id="q6-2" value="b">
+            <span class="quiz-radio checkmark"></span>
+          </label>
+          <label class="quiz-cc checkbox-container">I haven't studied economics before
+            <input type="radio" name="survey_6" id="q6-2" value="b">
+            <span class="quiz-radio checkmark"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="question-container">
+        <p class="content-q">
+          <br/>
+           7. How interesting was the content you learned?
+        </p>
+        <div class="question-input">
+          <label class="quiz-cc checkbox-container">Not interesting at all
+            <input type="radio" name="survey_7" id="q7-1" value="a">
+            <span class="quiz-radio checkmark"></span>
+          </label>
+          <label class="quiz-cc checkbox-container">Somewhat not interesting
+            <input type="radio" name="survey_7" id="q7-2" value="b">
+            <span class="quiz-radio checkmark"></span>
+          </label>
+          <label class="quiz-cc checkbox-container">Neutral
+            <input type="radio" name="survey_7" id="q7-2" value="b">
+            <span class="quiz-radio checkmark"></span>
+          </label>
+          <label class="quiz-cc checkbox-container">Somewhat interesting
+            <input type="radio" name="survey_7" id="q7-2" value="b">
+            <span class="quiz-radio checkmark"></span>
+          </label>
+          <label class="quiz-cc checkbox-container">Very interesting
+            <input type="radio" name="survey_7" id="q7-2" value="b">
+            <span class="quiz-radio checkmark"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="question-container">
+        <p class="content-q">
+          <br/>
+           8. Would you be interested in learning more economics?
+        </p>
+        <div class="question-input">
+          <label class="quiz-cc checkbox-container">Not interested at all
+            <input type="radio" name="survey_8" id="q8-1" value="a">
+            <span class="quiz-radio checkmark"></span>
+          </label>
+          <label class="quiz-cc checkbox-container">Somewhat not interested
+            <input type="radio" name="survey_8" id="q8-2" value="b">
+            <span class="quiz-radio checkmark"></span>
+          </label>
+          <label class="quiz-cc checkbox-container">Neutral
+            <input type="radio" name="survey_8" id="q8-2" value="b">
+            <span class="quiz-radio checkmark"></span>
+          </label>
+          <label class="quiz-cc checkbox-container">Somewhat interested
+            <input type="radio" name="survey_8" id="q8-2" value="b">
+            <span class="quiz-radio checkmark"></span>
+          </label>
+          <label class="quiz-cc checkbox-container">Very interested
+            <input type="radio" name="survey_8" id="q8-2" value="b">
+            <span class="quiz-radio checkmark"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="question-container">
+        <p class="content-q">
+          <br/>
+           9. From 0 to 10 how much did you enjoyed the way the content was presented (0 - Not enjoyed at all, 10 - Enjoyed a lot)?
+        </p>
+        <div class="question-input">
+          <input type="text" name="survey_9" class="consent-input" value="">
+        </div>
+      </div>
+
+      <div class="question-container">
+        <p class="content-q">
+          <br/>
+           10. From 0 to 10 how focused where you during the content (0 - Not focused at all, 10 - Very focused)?
+        </p>
+        <div class="question-input">
+          <input type="text" name="survey_10" class="consent-input" value="">
+        </div>
+      </div> -->
+
+    </div>
+    <div id="survey_section_2">
+      <h2>Section 2</h2>
+    </div>
+    <div id="survey_section_3">
+      <h2>Section 3</h2>
+      <div class="survey_section_explanation">
+        Answer the following questions based on how much you agree with the statement provided.<br><br>
+        0 - Not agree at all, 10 - Strongly Agree
+      </div>
+    </div>
+
+
+
+
+
+    <!-- Question -->
+    <!-- <div class="question-container">
+      <p class="content-q">
+        <br/>
+         9. From 0 to 10 how much did you enjoyed the way the content was presented (0 - Not enjoyed at all, 10 - Enjoyed a lot)?
+      </p>
+      <div class="question-input">
+        <label class="quiz-cc checkbox-container">Not interested at all
+          <input type="radio" name="q9" id="q9-1" value="a">
+          <span class="quiz-radio checkmark"></span>
+        </label>
+        <label class="quiz-cc checkbox-container">Somewhat not interested
+          <input type="radio" name="q9" id="q9-2" value="b">
+          <span class="quiz-radio checkmark"></span>
+        </label>
+        <label class="quiz-cc checkbox-container">Neutral
+          <input type="radio" name="q9" id="q9-2" value="b">
+          <span class="quiz-radio checkmark"></span>
+        </label>
+        <label class="quiz-cc checkbox-container">Somewhat interested
+          <input type="radio" name="q9" id="q9-2" value="b">
+          <span class="quiz-radio checkmark"></span>
+        </label>
+        <label class="quiz-cc checkbox-container">Very interested
+          <input type="radio" name="q9" id="q9-2" value="b">
+          <span class="quiz-radio checkmark"></span>
+        </label>
+      </div>
+    </div> -->
+
+
+
+
+
+  </form>
+  <div class="survey_empty" id="survey_empty" style="display:none">
+    Some items in the survey are empty. Make sure you fill everything properly.
+  </div>
+  <div class="survey_empty" id="survey_incorrect" style="display:none">
+    Some items in the survey are filled incorrectly. Refer to each question for the correct format.
+  </div>
+  <button type="button" class="normal-btn" onclick="submit_survey()">Submit Survey</button>
+
+  </div>
+
+
+
+  </div>
+
+
+
+
+
+
+  <!--
+  <div class="survey">
+    <script>(function(t,e,s,n){var o,a,c;t.SMCX=t.SMCX||[],e.getElementById(n)||(o=e.getElementsByTagName(s),a=o[o.length-1],c=e.createElement(s),c.type="text/javascript",c.async=!0,c.id=n,c.src=["https:"===location.protocol?"https://":"http://","widget.surveymonkey.com/collect/website/js/tRaiETqnLgj758hTBazgd_2BbVaPubliPOxqz5Z5TxhXZVB_2FNz7f4KwWSwLN7Wa7s6.js"].join(""),a.parentNode.insertBefore(c,a))})(window,document,"script","smcx-sdk");</script>
+  </div> -->
+
+  <!-- <button type="button" onclick="goToReceipt()" class="normal-btn">Cash Receipt</button> -->
+  <div id="survey_clock" class="stopwatch" style="display:none"></div>
+
+<script src="{% static 'js/survey.js' %}" charset="utf-8"></script>
+<script type="text/javascript">
+  url_submit_survey = "{% url 'url_submit_survey' %}"
+  var session = "{{request.session.key_copy}}"
+
+  var timer = new Stopwatch(document.getElementById("survey_clock"));
+  timer.start()
+
+  function goToReceipt(){
+    window.location.href = "{% url 'cash-receipt' %}"
+  }
+
+
+function submit_survey() {
+  var questions = 19
+  let answers = {}
+  var form = document.getElementById('survey-form')
+  for (let i = 1; i <= questions; i++) {
+    if (i === 5) {
+      let choices = []
+      for (var j = 0; j <= 7; j++) {
+        let a = document.getElementById('survey5-'+j)
+        if (a.checked) {
+          choices.push(a.value)
+        }
+      }
+      answers['survey'+String(i)] = choices
+    } else {
+      answers['survey'+String(i)] = [form['survey'+String(i)].value]
+    }
+  }
+
+  console.log(answers);
+
+  let okay = validateSurvey(answers, 19)
+  if (!okay) return
+
+  let seconds_taken = timer.get_time()
+
+  var request = $.ajax({
+    url: url_submit_survey,
+    type : 'POST',
+    async: true,
+    data: {session: session, seconds_taken: seconds_taken, survey_answers: JSON.stringify(answers), csrfmiddlewaretoken: csrftoken},
+  })
+  request
+  .done(function(data){
+    console.log('data', data);
+  })
+  .fail(function(error){
+    console.log(error);
+  })
+  window.location.href = "{% url 'cash-receipt' %}"
+}
+</script>
+
+</div>
+{% endblock %}

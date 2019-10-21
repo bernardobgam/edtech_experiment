@@ -1,0 +1,105 @@
+{% extends 'site.html' %}
+
+{% block content %}
+{% load static %}
+<div style="padding: 20px 10%">
+  <div style="text-align:center;position:relative;">
+
+    <h1 style="text-align:center;display:inline-block">Experiment Panel</h1>
+    <button type="button" style="display:inline-block;float:right" class="panel-btn" onclick="retrieveData()">Retrieve Data</button>
+
+    {% if codes %}
+    <div id="codes-select" class="experiments-container" onchange="changeurl()">
+        <div class="experiments-sort-container">
+          <div class="experiments-sort">Code</div>
+          <div class="experiments-sort">Date</div>
+          <div class="experiments-sort">Participants</div>
+          <div class="experiments-sort">Tools</div>
+        </div>
+      {% for c in codes %}
+      <a href="{% url 'control-panel' c.id %}" class="ainv">
+        <div class="experiment-block">
+          <div class="experiment-tag">{{c.code}}</div>
+          <div class="experiment-tag">{{c.date}}</div>
+          <div class="experiment-tag">{{c.count}}</div>
+          <div class="experiment-tag">
+            <form class="" action="{% url 'download-consent_forms' %}" method="get" style="display:inline-block;margin: 0 8px;">
+              <button type="submit" name="consent-download" class="icon-btn" style="font-size:15px">
+                <input name="code" value="{{c.id}}" type="hidden">
+                <i name="consent_download" id="form1-{{forloop.counter}}" class="fas fa-file-download" style="color:#fdfdfd"></i>
+              </button>
+            </form>
+            <form action="{% url 'download-cash_receipt' %}" method="get" style="display:inline-block;margin: 0 8px;">
+              <button type="submit" name="consent-download" class="icon-btn" style="font-size:15px">
+                <input name="code" value="{{c.id}}" type="hidden">
+                <i name="receipt_download" id="form2-{{forloop.counter}}" class="fas fa-file-download" style="color:#fdfdfd"></i>
+              </button>
+            </form>
+          </div>
+
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+</div>
+<!-- <script src="https://unpkg.com/jspdf@latest/dist/jspdf.min.js"></script> -->
+<script type="text/javascript">
+
+  var retrieve_url = "{% url 'retrieve_all_data' %}"
+  function retrieveData() {
+    var request = $.ajax({
+      url: retrieve_url,
+      type : 'GET',
+      async: true,
+    })
+    request
+    .done(function(data){
+      console.log('success');
+      var blob = new Blob([data], {type: "octet/stream"})
+      var url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      document.body.appendChild(a);
+      a.href = url;
+      a.download = "ExperimentData.csv";
+      a.click();
+      window.URL.revokeObjectURL(url);
+    })
+      // .then(resp => resp.blob())
+      // .then(blob => {
+      //   const url = window.URL.createObjectURL(blob);
+      //   const a = document.createElement('a');
+      //   a.style.display = 'none';
+      //   a.href = url;
+      //   // the filename you want
+      //   a.download = 'todo-1.json';
+      //   document.body.appendChild(a);
+      //   a.click();
+      //   window.URL.revokeObjectURL(url);
+      //   alert('your file has downloaded!'); // or you know, something with better UX...
+      // })
+    .fail(function(error){
+      console.log(error);
+    })
+  }
+
+  var numItems = $('.experiment-block').length
+  // console.log(numItems);
+  var tooltips = []
+
+  for (var i = 1; i <= numItems; i++) {
+    tooltips.push({id: "#form1-" + String(i) , title: "Download Consent Forms" })
+    tooltips.push({id: "#form2-" + String(i) , title: "Download Cash Receipts" })
+  }
+
+  tooltips.forEach((tooltip) => {
+    new Tooltip(document.querySelector(tooltip.id), {
+      placement: 'left',
+      title: tooltip.title,
+      template: '<div class="tooltip-admin" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
+    });
+  })
+
+</script>
+{% endblock %}

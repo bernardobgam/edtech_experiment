@@ -1,0 +1,115 @@
+{% extends 'site.html' %}
+
+{% block content %}
+{% load static %}
+<div>
+  <!-- Header with image-->
+  <div style="background: url('{% static 'images/book.jpg' %}');" class="smaller-image home-image">
+    <div class="smaller-image home-image-layer" style="height: 150px">
+      <div class="home-title">
+        Cash Receipt Form
+      </div>
+    </div>
+  </div>
+
+  <div class="grade_report">
+    {% if grade %}
+    <div class="">
+      Your grade on the quiz was <strong>{% widthratio grade 1 100 %}%</strong>.
+    </div>
+    {% if payment %}
+    <br/>
+    <div class="">
+      Your payment is made up of your show up fee ($5) plus your quiz grade times $30.
+      <br/><br>
+      <strong>$5 + $15 + {{grade}} * $5 = ${{payment}}</strong>
+      <!-- <strong>$5 +  {{grade}} * $30 = ${{payment}}</strong> -->
+    </div>
+    {% endif %}
+    {% endif %}
+  </div>
+
+  <div class="consent-text" style="padding: 20px 10% 50px;">
+    <form action="." method="POST" id="receiptform">
+      <label class="">Payment Cash Amount:<br/>
+        {% if payment %}
+        <span style="font-size: 30px;vertical-align: middle;">$ </span><input type="text" class="consent-input" value="{{payment}}" disabled autocomplete="off">
+        <input type="text" name="cash-amount" value="{{payment}}" style="display:none">
+        <input type="text" name="cash-session" value="{{session}}" style="display:none">
+        {% else %}
+        <span style="font-size: 30px;vertical-align: middle;">$ </span><input type="text" class="consent-input" name="cash-amount" value="" autocomplete="off">
+        {% endif %}
+      </label>
+      {% if id %}
+      <div style="color:green">
+        Cash Receipt already completed.
+      </div>
+      {% else %}
+
+
+      <label class=""><br/>Full name:<br/>
+        <span style="font-size: 30px;visibility:hidden;">$ </span><input type="text" class="consent-input" name="cash-name" value="" autocomplete="off">
+      </label>
+
+      <label class=""><br/>Draw you signature:<br/>
+        <div id="signature" style="background:white;border:2px black solid;margin:10px 0;"></div>
+      </label>
+
+      <input type="text" name="cash-signature" value="" style="display:none">
+      <button type="button" class="clearsignature-button" id="signature-reset">Clear Signature</button>
+      <!-- <button type="button" id="signature-export">Export</button> -->
+      {{ form.media }}
+        {% for field in form %}
+            {{ field.label_tag }}
+            {{ field }}
+        {% endfor %}
+        <!-- <input type="submit" value="Save"/> -->
+        <br/><br/>
+        <button type="button" class="consent-submit-button" id="receipt-submit">Submit</button>
+        {% csrf_token %}
+        {% endif %}
+    </form>
+  </div>
+
+  <script src="{% static 'js/jSignature.min.js' %}"></script>
+  <script>
+      $(document).ready(function() {
+          $("#signature").jSignature()
+
+          $('#signature-reset').click(function(){
+            $("#signature").jSignature("reset")
+          })
+
+          $('#signature-export').click(function(){
+            let datapair = $("#signature").jSignature("getData", "svgbase64")
+            let i = new Image()
+            i.src = "data:" + datapair[0] + "," + datapair[1]
+            console.log(i.src);
+            $('a#someID').attr({target: '_blank',href: i.src});
+            let link = document.createElement("a");
+            link.download = 'image';
+            link.href = i.src;
+            link.click();
+            // $(i).appendTo($("#someelement")) // append the image (SVG) to DOM.
+          })
+
+          $('#receipt-submit').click(function(){
+            let form = document.getElementById('receiptform')
+            let datapair = $("#signature").jSignature("getData", "svgbase64")
+            let i = new Image()
+            i.src = "data:" + datapair[0] + "," + datapair[1]
+            console.log(form['cash-amount'].value,form['cash-name'].value);
+            console.log(i.src);
+            form['cash-signature'].value = i.src
+            if (form['cash-name'].value.length < 3) {
+              alert("name is empty")
+            } else {
+              form.submit()
+            }
+          })
+
+
+      })
+  </script>
+</div>
+{% endblock %}

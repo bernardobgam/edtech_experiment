@@ -1,0 +1,252 @@
+{% extends 'site.html' %}
+
+{% block content %}
+{% load static %}
+<div style="padding-top:20px;">
+  <a href="{% url 'experiments' %}" class="ainv-back">&#60; Back</a>
+</div>
+<div style="padding: 30px 10% 5px">
+  <div style="text-align:center;position:relative;">
+    <h1 style="text-align:center;display: inline">
+      Experiment Panel
+    </h1>
+    <div class="icon-btn" id="r_instructions" onclick="toggleRModal()" style="vertical-align:top;margin-top:5px">
+      <i class="fas fa-info icon-i"></i>
+    </div>
+    <h2 style="text-align:center;margin:0;color:#3e7575">Access Code: {{name}}</h2>
+  </div>
+</div>
+
+<div style="margin: 30px 10%;text-align:center;">
+  <div class="top-container">
+    <div class="top-left-panel">
+      <h2 class="top-panel-title">Tools
+        <div id="timer222">
+
+        </div>
+        <img src="{% static 'images/loader.gif' %}" style="width:33px;position:fixed;margin-left:10px;display:none" id="loader" alt="">
+      </h2>
+        <table class="table-groups">
+          <tr>
+            <th></th>
+            <th class="td_status">Status</th>
+            <th>Actions</th>
+          </tr>
+          <tr>
+            <td>Assign Groups</td>
+            <td class="td_status status_no" id="group_assigned">Not Assigned</td>
+            <td>
+              <div class="icon-btn" id="randomise">
+                <i class="fas fa-users icon-i"></i>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>Unlock Content</td>
+            {% if content_access == True %}
+            <td class="td_status status_yes">Unlocked</td>
+            {% else %}
+            <td class="td_status status_no">Locked</td>
+            {% endif %}
+            <td>
+              <div class="icon-btn" id="allow-content">
+                <i class="fas fa-book-open icon-i"></i>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>Content Timer</td>
+            {% if content_time != "" %}
+            <td class="td_status status_yes">
+              <div id="date_start">Start: {{content_time|time:"h:i a"}}</div>
+              <div id="date_end">End: {{end_time|time:"h:i a"}}</div>
+              <div id="timer"></div>
+            </td>
+            {% else %}
+            <td class="td_status status_no">
+              <div id="timer"></div>
+            </td>
+            {% endif %}
+            <form id="content_time_form" name="content_time" method="post" style="display:none">
+              {% csrf_token %}
+              <input type="text" name="content_start" value="true" style="display:none">
+            </form>
+            <td>
+              <!-- <div class="icon-btn" id="action_countdown">
+                <i class="fas fa-stopwatch icon-i"></i>
+              </div> -->
+            </td>
+          </tr>
+          <!-- <tr>
+            <td>Unlock Quiz</td>
+            {% if quiz_access == True %}
+            <td class="td_status status_yes">Unlocked</td>
+            {% else %}
+            <td class="td_status status_no">Locked</td>
+            {% endif %}
+            <td>
+              <div class="icon-btn" id="allow-quiz">
+                <i class="fas fa-pencil-alt icon-i"></i>
+              </div>
+            </td>
+          </tr> -->
+        </table>
+    </div>
+    <div class="top-right-panel">
+      <h2 class="top-panel-title">Groups</h2>
+      <div style="text-align:left; padding: 0 20px;">
+        <table class="table-groups">
+          <tr class="tr_a_c">
+            <th class="table-group-padding">Code</th>
+            <th class="table-group-padding">Participants</th>
+            <th class="table-group-padding">Treatment</th>
+          </tr>
+          <tr class="tr_a_c">
+            <td class="table-cell-group-group">P</td>
+            <td id="group-p"></td>
+            <td class="table-group-padding">Paper</td>
+          </tr>
+          <tr class="tr_a_c">
+            <td class="table-cell-group-group">D1</td>
+            <td id="group-d1"></td>
+            <td class="table-group-padding">Digital PDF</td>
+          </tr>
+          <tr class="tr_a_c">
+            <td class="table-cell-group-group">D2</td>
+            <td id="group-d2"></td>
+            <td class="table-group-padding">Digital Interactive</td>
+          </tr>
+          <tr class="tr_a_c">
+            <td class="table-cell-group-group">D3</td>
+            <td id="group-d3"></td>
+            <td class="table-group-padding">Digital Interactive + Gamification</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+  </div>
+  <div class="panel-buttons">
+    <button type="button" id="refresh" class="refresh-btn">
+      <i class="fas fa-sync-alt icon-i" style="color: #27e02e;"></i>
+    </button>
+  </div>
+  <table id="panel-table" class="table-style">
+    <!-- Table Contents are loaded from panel.js -->
+  </table>
+  <br/>
+  <div style="display: inline-flex;">
+    <label class="quiz-cc checkbox-container" style="margin: 0 20px;">Averages
+      <input type="checkbox" onclick="toggleAdmin('averages')" value="a">
+      <span class="quiz-checkmark checkmark"></span>
+    </label>
+    <label class="quiz-cc checkbox-container" style="margin: 0 20px;">Distribution
+      <input type="checkbox" onclick="toggleAdmin('distribution')" value="a">
+      <span class="quiz-checkmark checkmark"></span>
+    </label>
+    <label class="quiz-cc checkbox-container" style="margin: 0 20px;">Survey
+      <input type="checkbox" onclick="toggleAdmin('survey_results')" value="a">
+      <span class="quiz-checkmark checkmark"></span>
+    </label>
+  </div>
+  <br/><br/>
+  <div id="averages" style="display: none">
+    <table id="panel-summary-table" class="table-style">
+      <!-- Table Contents are loaded from panel.js -->
+    </table>
+  </div>
+  <div class="empty-particpants" id="no-participants">
+    Participants may join now with the provded code. Waiting for participants...
+  </div>
+  <div id="distribution" style="margin: 20px 0; display: none">
+    <img src="{{image}}" alt="" style="max-width:100%">
+  </div>
+  <div id="survey_results" style="margin-top: 10px; display: none">
+    <table id="panel-survey-table" class="table-style">
+      <!-- Table Contents are loaded from panel.js -->
+    </table>
+  </div>
+</div>
+<div class="modal" id="r-modal">
+    <div class="modal-content">
+        <span class="close-button" onclick="toggleRModal()"><i class="fas fa-times"></i></span>
+        <div class="consent-text">
+          <h2>Researcher Instructions</h2>
+          <ol>
+            <li>Register participants (on paper) and get them to sit down on the computers.</li>
+            <li>Provide the Access Code (which for this session is <strong>{{name}}</strong>) and ask them to input their computer number.</li>
+            <li>Get them to read the instructions and fill the consent form, after which they will be sent do a waiting screen.</li>
+            <br/>
+            <strong>Waiting Screen</strong>
+            <br/>
+            <li>At the waiting screen, or as soon as you have all the participants for the session you may press the <strong>Randomise</strong> button to assign participants to their groups.</li>
+            <li>After this you may allow access to the content by pressing the <strong>Allow Access to Content</strong> button.</li>
+            <li>When each student accesses the content a timer will start with 20 minutes, at the end of this timer they will be redirected to the quiz.</li>
+            <li>As soon as participants have completed the quiz they may continue to the survey.</li>
+            <li>Get participants to fill up the digital cash receipt form and prepare cash payment.</li>
+            <li>When all participants are done with the survey make payment after confirming signed digital receipt.</li>
+            <li>Participants that have been paid may leave.</li>
+          </ol>
+        </div>
+    </div>
+</div>
+
+<div id="starttimer" style="display:none"></div>
+<script type="text/javascript">
+  var randomiseUrl = "{% url 'lab-randomise' code_id=id %}"
+  var url = "{% url 'get_participants' code_id=id %}"
+  var url_set_access = "{% url 'lab_set_access' %}"
+  var code_id = "{{name}}"
+</script>
+<script type="text/javascript" src="{% static 'js/panel.js' %}"></script>
+<script type="text/javascript">
+  console.log(JSON.parse({{surveys|safe}}));
+  try {
+    var survey_data = JSON.parse({{surveys|safe}})
+    if (survey_data) {
+      surveyTable(survey_data)
+    }
+    console.log(survey_data);
+  } catch (e) {
+
+  }
+
+
+  function toggleAdmin(id) {
+      el = document.getElementById(id)
+      if (el.style.display != "none") {
+        el.style.display = "none"
+      } else {
+        el.style.display = "block"
+      }
+  }
+
+  if ('{{content_time}}' !== "") {
+    var django_time = Date.parse('{{content_time.isoformat }}')
+    var duration = '{{duration}}'
+    var timer2 = new CountDownTimer(document.getElementById("timer"), django_time, duration );
+    timer2.start()
+  }
+
+  var refresh_function = setInterval(function(){
+    $('#refresh').click()
+  } ,1000)
+
+  var r_modal = document.getElementById("r-modal");
+
+  function toggleRModal() {
+      r_modal.classList.toggle("show-modal");
+  }
+
+  function windowOnClick(event) {
+      if (event.target === r_modal) {
+          toggleRModal();
+      }
+  }
+
+  window.addEventListener("click", windowOnClick);
+</script>
+
+
+
+{% endblock %}

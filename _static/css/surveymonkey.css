@@ -1,0 +1,10 @@
+
+
+.smcx-embed {
+  max-width: none !important;
+  height: max-content;
+}
+
+.smcx-embed>.smcx-iframe-container {
+  max-width: none !important;
+}

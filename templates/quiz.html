@@ -1,0 +1,384 @@
+{% extends 'site.html' %}
+
+{% block content %}
+{% load static %}
+<div>
+  <!-- Researcher Controls -->
+  {% if user.is_authenticated %}
+  <div class="researcher-buttons">
+    <a class="btn-left r-btn" href="{% url 'content' %}"><span>&#60;</span> Back</a>
+    <div class="r-title">Researcher Controls</div>
+    <a class="btn-right r-btn" href="{% url 'survey' %}">Next <span>&#62;</span></a>
+  </div>
+  {% endif %}
+
+
+  <!-- Header with image-->
+  <div style="background: url('{% static 'images/book.jpg' %}')" class="smaller-image home-image">
+    <div class="smaller-image home-image-layer">
+      <div class="home-title">
+        Quiz
+      </div>
+    </div>
+  </div>
+  <div id="quiz_clock" class="stopwatch" style="display:none"></div>
+  <div class="quiz_timer" id="quiz_timer" style="position:fixed"></div>
+  <div class="redirect-container" id="content-timer-container" style="display:none">
+    <div class="redirect-message">
+      You will be redirected in
+    </div>
+    <div class="redirect-seconds" id="content-timer">5</div>
+  </div>
+
+  <!-- Questions -->
+  <div class="btns-container2">
+    <br/>
+    {% if not quiz_grade == 0.0 and not user.is_authenticated %}
+    <div style="font-size:20px">
+      Your quiz is already submitted. Continue to survey.
+    </div>
+    {% else %}
+    <div style="font-size:20px">
+      Questions may have 1 or more correct answers. For each question, correct answer awards 1 mark, incorrect answers substract one mark.
+      The minimum mark possible for a question is 0. This quiz has 7 questions.
+      <br><br>
+      When the 10 minutes is over the quiz will automatically be submitted. Make sure you complete your choices by then.
+    </div>
+       <div class="question-container">
+         <div style="font-weight:bold">
+           Question 1
+         </div>
+         <p class="content-q">
+           <img src="{% static 'images/figure-03-02.jpg' %}" style="max-width:100%">
+           <br/>
+           <br/>
+            Which of the following statements are correct regarding hours of work and income? (Based on the graph above)
+         </p>
+         <div class="question-input">
+           <label class="quiz-cc checkbox-container">The "price" of an hour of free time is the hourly wage rate.
+             <input type="checkbox" id="q1-1" value="a">
+             <span class="quiz-checkmark checkmark"></span>
+           </label>
+           <label class="quiz-cc checkbox-container">We can infer that Norway has a higher GDP per capita than the US, as the Norwegians work more hours than the Americans.
+             <input type="checkbox" id="q1-2" value="b">
+             <span class="quiz-checkmark checkmark"></span>
+           </label>
+           <!-- Correct -->
+           <label class="quiz-cc checkbox-container">An increase in the real wage rate would encourage you to work more as the opportunity cost of leisure becomes higher.
+             <input type="checkbox" id="q1-3" value="c">
+             <span class="quiz-checkmark checkmark"></span>
+           </label>
+           <label class="quiz-cc checkbox-container">An increase in the real wage rate would encourage you to work less as your income from working a given number of hours is now higher than before.
+             <input type="checkbox" id="q1-4" value="d">
+             <span class="quiz-checkmark checkmark"></span>
+           </label>
+         </div>
+       </div>
+
+
+       <div class="question-container">
+         <div style="font-weight:bold">
+           Question 2
+         </div>
+         <p class="content-q">
+            The average product of labour is diminishing when:
+         </p>
+         <div class="question-input">
+           <label class="quiz-cc checkbox-container">The marginal product of labour is diminishing.
+             <input type="checkbox" id="q2-1" value="a">
+             <span class="quiz-checkmark checkmark"></span>
+           </label>
+           <label class="quiz-cc checkbox-container">The production function is concave.
+             <input type="checkbox" id="q2-2" value="b">
+             <span class="quiz-checkmark checkmark"></span>
+           </label>
+           <!-- Correct -->
+           <label class="quiz-cc checkbox-container">The marginal product of labour is smaller than the average product of labour.
+             <input type="checkbox" id="q2-3" value="c">
+             <span class="quiz-checkmark checkmark"></span>
+           </label>
+           <label class="quiz-cc checkbox-container">The marginal product of labour is negative.
+             <input type="checkbox" id="q2-4" value="d">
+             <span class="quiz-checkmark checkmark"></span>
+           </label>
+         </div>
+       </div>
+
+       <div class="question-container">
+         <div style="font-weight:bold">
+           Question 3
+         </div>
+         <p class="content-q">
+            Consider an individual’s indifference curves for the consumption of two goods (things you would like to have more of). In this case, which of the following statements are true?
+         </p>
+         <div class="question-input">
+           <!-- Correct -->
+           <label class="quiz-cc checkbox-container">
+             The indifference curves are downward-sloping.
+             <input type="radio" name="q3" id="q3-1" value="a">
+             <span class="quiz-radio checkmark"></span>
+           </label>
+           <label class="quiz-cc checkbox-container">
+             The indifference curves can sometimes cross.
+             <input type="radio" name="q3" id="q3-2" value="b">
+             <span class="quiz-radio checkmark"></span>
+           </label>
+           <label class="quiz-cc checkbox-container">
+             The indifference curves cannot have sections that are straight lines
+             <input type="radio" name="q3" id="q3-3" value="c">
+             <span class="quiz-radio checkmark"></span>
+           </label>
+           <label class="quiz-cc checkbox-container">
+             The indifference curves cannot have kinks.
+             <input type="radio" name="q3" id="q3-4" value="d">
+             <span class="quiz-radio checkmark"></span>
+           </label>
+         </div>
+       </div>
+
+
+       <div class="question-container">
+         <div style="font-weight:bold">
+           Question 4
+         </div>
+         <p class="content-q">
+Consider indifference curves for the consumption of milk and chocolates (you may assume that both are "goods"). The indifference curves are drawn with the number of chocolate bars on the horizontal axis and pints of milk on the vertical axis. Suppose consumer A has a flatter indifference curve than consumer B. In this case, we can conclude that:
+         </p>
+         <div class="question-input">
+           <!-- Correct -->
+           <label class="quiz-cc checkbox-container">
+             Consumer A likes chocolate more than consumer B.
+             <input type="radio" name="q4" id="q4-1" value="a">
+             <span class="quiz-radio checkmark"></span>
+           </label>
+           <label class="quiz-cc checkbox-container">
+             The price of milk relative to the price of chocolates is higher for consumer A than for consumer B.
+             <input type="radio" name="q4" id="q4-2" value="b">
+             <span class="quiz-radio checkmark"></span>
+           </label>
+           <label class="quiz-cc checkbox-container">
+             The indifference curves of the two consumers cannot cross.
+             <input type="radio" name="q4" id="q4-3" value="c">
+             <span class="quiz-radio checkmark"></span>
+           </label>
+           <label class="quiz-cc checkbox-container">
+             Given the same amount of chocolates, consumer A is willing to swap one bar of chocolate for a smaller amount of milk than consumer B.
+             <input type="radio" name="q4" id="q4-4" value="d">
+             <span class="quiz-radio checkmark"></span>
+           </label>
+         </div>
+       </div>
+
+       <div class="question-container">
+         <div style="font-weight:bold">
+           Question 5
+         </div>
+         <p class="content-q">
+           <img src="{% static 'images/figure-03-05-a.jpg' %}" style="max-width:100%">
+           <br/>
+           <br/>
+The graph above shows Alexei’s production function, with the final grade (the output) related to the number of hours spent studying (the input).
+<br/><br/>
+Which of the following is true?
+         </p>
+         <div class="question-input">
+           <!-- Correct -->
+           <label class="quiz-cc checkbox-container">
+             The marginal product and average product are approximately the same for the initial hour.
+             <input type="checkbox" id="q5-1" value="a">
+             <span class="quiz-checkmark checkmark"></span>
+           </label>
+           <label class="quiz-cc checkbox-container">
+             The marginal product and the average product are both constant beyond 15 hours.
+             <input type="checkbox" id="q5-2" value="b">
+             <span class="quiz-checkmark checkmark"></span>
+           </label>
+           <label class="quiz-cc checkbox-container">
+             The horizontal production function beyond 15 hours means that studying for more than 15 hours is detrimental to Alexei’s performance.
+             <input type="checkbox" id="q5-3" value="c">
+             <span class="quiz-checkmark checkmark"></span>
+           </label>
+           <label class="quiz-cc checkbox-container">
+             The marginal product and the average product at 20 hours are both 4.5.
+             <input type="checkbox" id="q5-4" value="d">
+             <span class="quiz-checkmark checkmark"></span>
+           </label>
+         </div>
+       </div>
+
+       <div class="question-container">
+         <div style="font-weight:bold">
+           Question 6
+         </div>
+         <p class="content-q">
+           <img src="{% static 'images/figure-03-06-g.jpg' %}" style="max-width:100%">
+           <br/>
+           <br/>
+        The graph above shows Alexei’s indifference curves for free time and final grade.
+        <br/><br/>
+        Which of the following is true?
+         </p>
+         <div class="question-input">
+           <!-- Correct -->
+           <label class="quiz-cc checkbox-container">
+             Alexei prefers C to B because at C he has more free time.
+             <input type="radio" name="q6" id="q6-1" value="a">
+             <span class="quiz-radio checkmark"></span>
+           </label>
+           <label class="quiz-cc checkbox-container">
+             Alexei is indifferent between the grade of 84 with 15 hours of free time, and the grade of 50 with 20 hours of free time.
+             <input type="radio" name="q6" id="q6-2" value="b">
+             <span class="quiz-radio checkmark"></span>
+           </label>
+           <label class="quiz-cc checkbox-container">
+             Alexei prefers D to C, because at D he has the same grade and more free time
+             <input type="radio" name="q6" id="q6-3" value="c">
+             <span class="quiz-radio checkmark"></span>
+           </label>
+           <label class="quiz-cc checkbox-container">
+             At G, Alexei is willing to give up 2 hours of free time for 10 extra grade points.
+             <input type="radio" name="q6" id="q6-4" value="d">
+             <span class="quiz-radio checkmark"></span>
+           </label>
+         </div>
+       </div>
+
+       <div class="question-container">
+         <div style="font-weight:bold">
+           Question 7
+         </div>
+         <p class="content-q">
+           <br/>
+What is the marginal rate of substitution (MRS)?
+         </p>
+         <div class="question-input">
+           <!-- Correct -->
+           <label class="quiz-cc checkbox-container">
+             The ratio of the amounts of the two goods at a point on the indifference curve.
+             <input type="checkbox" id="q7-1" value="a">
+             <span class="quiz-checkmark checkmark"></span>
+           </label>
+           <label class="quiz-cc checkbox-container">
+             The amount of one good that the consumer is willing to trade for one unit of the other.
+             <input type="checkbox" id="q7-2" value="b">
+             <span class="quiz-checkmark checkmark"></span>
+           </label>
+           <label class="quiz-cc checkbox-container">
+             The change in the consumer’s utility when one good is substituted for another.
+             <input type="checkbox" id="q7-3" value="c">
+             <span class="quiz-checkmark checkmark"></span>
+           </label>
+           <label class="quiz-cc checkbox-container">
+             The slope of the indifference curve.
+             <input type="checkbox" id="q7-4" value="d">
+             <span class="quiz-checkmark checkmark"></span>
+           </label>
+         </div>
+       </div>
+       <div id="questions-help" style="font-size: 20px;color: red;display: none;">
+         You haven't answered all the questions. Are you sure you want to submit?
+       </div>
+       <div id="quiz_button">
+         <button type="button" class="normal-btn" onclick="goToSurvey()">Submit Quiz</button>
+       </div>
+       <div class="" id="quiz_empty" style="display:none">
+
+         <button type="button" class="normal-btn" onclick="dontSubmit()" style="width: 38%;display: inline-block;">Dont Submit Yet</button>
+         <button type="button" class="normal-btn" onclick="goToSurvey(false)" style="width: 38%;display: inline-block;">Submit Quiz Anyway</button>
+       </div>
+       {% endif %}
+
+  </div>
+  <script src="{% static 'js/quiz.js' %}" charset="utf-8"></script>
+  <script type="text/javascript">
+    var url_submit_quiz = "{% url 'url_submit_quiz' %}"
+    var session = "{{request.session.key_copy}}"
+
+    var timer = new Stopwatch(document.getElementById('quiz_clock'))
+    timer.start()
+
+    funct = function(){
+      if ("{{quiz_access}}" === "False") {
+        goToSurvey(false)
+      }
+    }
+
+    if ('{{quiz_time}}' !== "") {
+      var django_quiz_time = Date.parse('{{quiz_time.isoformat }}')
+      var duration = 0
+      if ('{{duration}}' !== "") {
+        duration = {{duration}}
+      }
+      let timer2 = new CountDownTimer(document.getElementById("quiz_timer"), django_quiz_time, duration, funct);
+    }
+
+
+    if (!'{{quiz_grade}}' === "0.0") {
+      console.log('quiz grade ','{{quiz_grade}}');
+    }
+
+  function dontSubmit() {
+    document.getElementById('quiz_empty').style.display = "none"
+    document.getElementById('questions-help').style.display = "none";
+    document.getElementById('quiz_button').style.display = "block"
+  }
+
+  function goToSurvey(validateEmpty=true) {
+    var questions = 7
+    let answers = {}
+    for (let i = 1; i <= questions; i++) {
+      answers['q'+String(i)] = []
+      for (let j = 1; j<= 4; j++) {
+        let q_answer = document.getElementById("q"+String(i)+"-"+String(j))
+        if (q_answer.checked) {
+          answers['q'+String(i)].push(q_answer.value)
+        }
+      }
+    }
+
+    console.log(answers);
+
+    if (validateEmpty) {
+      let empty = false
+      document.getElementById('questions-help').style.display = "none";
+      for (let i = 1; i <= questions; i++) {
+        if (answers['q'+String(i)].length === 0) {
+          console.log('a question is empty')
+          document.getElementById('questions-help').style.display = "block";
+          empty = true
+        }
+      }
+      if (empty) {
+        document.getElementById('quiz_empty').style.display = "block"
+        document.getElementById('quiz_button').style.display = "none"
+        return
+      }
+    }
+
+
+    let seconds_taken = timer.get_time()
+
+    // console.log('seconds taken', seconds_taken);
+    // console.log('quiz answers', answers);
+
+    var request = $.ajax({
+      url: url_submit_quiz,
+      type : 'POST',
+      async: true,
+      data: {session: session, seconds_taken: seconds_taken, quiz_answers: JSON.stringify(answers), csrfmiddlewaretoken: csrftoken},
+    })
+    request
+    .done(function(data){
+      console.log('data', data);
+    })
+    .fail(function(error){
+      console.log(error);
+    })
+    window.location.href = "{% url 'survey' %}"
+  }
+
+
+</script>
+
+</div>
+{% endblock %}

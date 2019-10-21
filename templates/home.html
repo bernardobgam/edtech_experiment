@@ -1,0 +1,62 @@
+{% extends 'site.html' %}
+
+{% block content %}
+{% load static %}
+<div>
+  <!-- Header with image-->
+  <div style="background: url('{% static 'images/book.jpg' %}')" class="home-image">
+    <div class="home-image-layer">
+      <div class="home-title">
+        Economics Experiment
+      </div>
+      <div class="home-code">
+        {% if not logged %}
+        <form method="POST" id="codeform">
+          {% csrf_token %}
+          <input name="code" placeholder="Experiment Code" id="input" type="text" class="home-input" autocomplete="off">
+          <input name="computer" placeholder="Computer #" id="input" type="text" class="home-input2" autocomplete="off">
+          <input name="success" id="success" type="hidden">
+          <button type="button" class="normal-btn home-input-button" onclick="validateEntryForm()">Begin</button>
+        </form>
+        {% else %}
+          <h1 class="" style="color:white">
+            Session Code: {{request.session.code}}
+          </h1>
+          <div class="" style="color:white">
+            To reset complete experiment.
+          </div>
+        {% endif %}
+        {% if form_denied %}
+        <div class="home-error">
+          Your experiment code is incorrect. Ask the researcher for the correct code.
+        </div>
+        {% endif %}
+        <div class="home-error" id="home_error1" style="display:none">
+          Experiment code and computer number can't be empty
+        </div>
+        <div class="home-error" id="home_error2" style="display:none">
+          Computer # needs to be a number. Your computer should have its number in the yellow tag at the bottom right (last 3 numbers) ex. 003
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Buttons-->
+  <div class="buttons-container">
+    <a  href="{% url 'instructions' %}"><button class="normal-btn">Instructions</button></a>
+    <a  href="{% url 'consent' %}"><button class="normal-btn">Consent</button></a>
+    <a  href="{% url 'content' %}"><button class="normal-btn">Content</button></a>
+    <a  href="{% url 'quiz' %}"><button class="normal-btn">Quiz</button></a>
+    <a  href="{% url 'survey' %}"><button class="normal-btn">Survey</button></a>
+    {% if id %}
+    <a  href="{% url 'cash-receipt' %}"><button class="normal-btn">Receipt</button></a>
+    {% endif %}
+  </div>
+
+
+  <div style="position: fixed;bottom: 0;padding: 20px;">
+    <a  href="{% url 'login' %}">Researcher Login</a>
+  </div>
+</div>
+<script src="{% static 'js/home.js' %}" charset="utf-8"></script>
+{% endblock %}

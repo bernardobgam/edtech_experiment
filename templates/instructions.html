@@ -1,0 +1,135 @@
+{% extends 'site.html' %}
+
+{% block content %}
+{% load static %}
+<div>
+  <!-- Researcher Controls -->
+  {% if user.is_authenticated %}
+  <div class="researcher-buttons">
+    <a class="btn-left r-btn" href="{% url 'home' %}"><span>&#60;</span> Home</a>
+    <div class="r-title">Researcher Controls</div>
+    <a class="btn-right r-btn" href="{% url 'consent' %}">Next <span>&#62;</span></a>
+  </div>
+  {% endif %}
+  <!-- Header with image-->
+  <div style="background: url('{% static 'images/book.jpg' %}')" class="smaller-image home-image">
+    <div class="smaller-image home-image-layer">
+      <div class="home-title">
+        Instructions
+      </div>
+    </div>
+  </div>
+
+  <div class="consent-text">
+    <strong>Experiment Guidelines</strong>
+    <p>
+    Welcome to our economics experiment. In this experiment you will be presented with real introductory economics content, fill a quiz and complete a survey.
+    <br>
+    The duration of this experiment is approximately 60 minutes and participation is paid.
+    <br/><br/>
+    <u>If necessary you may use the calculator app included in your computer</u>
+    </p>
+    <strong>Content</strong>
+    <p>
+    You will be presented with a real university introductory economics chapter and you will receive <strong>30 minutes</strong> to review this content.
+    <br/><br/>
+    <strong>The Content consists of:</strong>
+    <ul>
+      <li>Textbook Chapter and Explanations</li>
+      <li>Graphs</li>
+      <li>Optional Practice Questions (Not graded)</li>
+    </ul>
+    This content will provide everything necessary to do well in the quiz and obtain higher payment.
+    <br/><br/>
+    If you have any questions you may raise your hand.
+    </p>
+    <strong>Quiz and Survey</strong>
+    <p>
+    The quiz will start once the 30 minutes to review the content has passed.
+    The quiz will have 7 questions, which will be based on the content you learn.
+    You will have <strong>10 minutes</strong> to complete the quiz, but you can submit the quiz before the 10 minutes have passed.
+    <br><br>
+    The score you obtain in the quiz will determine your final earnings.
+    After finalising the quiz you will complete an anonymous survey.
+    </p>
+    <strong>Timers</strong>
+    <p>
+    The Content and Quiz sections of the experiment will show countdown timers displaying the time you have left.
+    <br>
+    If the time ends before you submit your quiz it will be automatically submitted for you with your current answers.
+    </p>
+    <strong>Payment</strong>
+    <p>
+    The payment amount depends on a show up fee plus a variable amount that depends on your quiz grade.
+    </p>
+    <ul>
+      <li><strong>Show Up Fee:</strong> $5 dollars (AUD)</li>
+      <li><strong>Fee for finishing the experiment:</strong> $15 dollars (AUD)</li>
+      <li><strong>Variable Amount based on quiz grade:</strong> Up to a maximum of $5 dollars (AUD)</li>
+      <!-- <li><strong>Variable Amount based on quiz grade:</strong> Up to a maximum of $30 dollars (AUD)</li> -->
+    </ul>
+    <br/>
+    <strong style="color: darkcyan;">If you want to check the instructions at any time just press the <i class="fas fa-info-circle info2"></i> icon on the top right</strong>
+      <br/>
+      <button type="button" class="project-btn" onclick="toggleProjectInformation()">Click here to see more information on the project</button>
+      <div id="project-information" class="project-info">
+        <p>
+          <strong>Title of Project:</strong> The Effects of Different Learning Methods on Outcomes
+        </p>
+        <div class="">
+          <strong>Name of Researchers</strong>
+          <ul>
+            <li>Bernardo Gonzalez Arechiga, School of Economics, University of Queensland</li>
+            <li>Dr. Kenan Kalayci, School of Economics, University of Queensland</li>
+            <li>Dr. Rigissa Megalokonomou, School of Economics, University of Queensland</li>
+          </ul>
+        </div>
+        <div class="">
+          <p>
+            <strong>Purpose of study:</strong> This study investigates the use and effects of different learning methods
+          </p>
+          <p>
+            <strong>Data Collected:</strong> Decisions made during the experiment will be recorded anonymously.
+            You will need to provide your name and signature for the consent form and payment form for accounting purposes.
+            Your name or other personal information is not connected or saved along the rest of your experiment participation.
+          </p>
+        </div>
+        <strong>University of Queensland Ethics Approval and Further Information</strong>
+        <p>
+          "This study adheres to the Guidelines of the ethical review process of The University of Queensland and the National Statement on Ethical Conduct in Human Research. Whilst you are free to discuss your participation in this study with project staff (contactable on bernardo_gam@hotmail.com) if you would like to speak to an officer of the University not involved in the study, you may contact the Ethics Coordinators on +617 3365 3924 / +617 3443 1656 or email humanethics@research.uq.edu.au."
+        </p>
+      </div>
+  </div>
+
+
+  <!-- Next to Consent -->
+  <div class="btns-container2">
+    <a href="{% url 'consent' %}">
+      <button class="btn-right normal-btn" onclick="lab_progress('{% url 'update_progress' %}','{{request.session.key_copy}}','instructions')">Next</button>
+    </a>
+  </div>
+
+  <script type="text/javascript">
+
+    function toggleProjectInformation(){
+      console.log('button ticked');
+      let info = document.getElementById('project-information')
+      console.log(info.style.visibility);
+      if (info.style.visibility === "hidden" || info.style.visibility === "") {
+        // info.style.display = "block"
+        info.style.visibility = "visible"
+        info.style.opacity = 1
+        info.style.height = "auto"
+      } else {
+        // info.style.display = "none"
+        info.style.visibility = "hidden"
+        info.style.opacity = 0
+        info.style.height = '2px'
+
+      }
+    }
+
+  </script>
+
+</div>
+{% endblock %}

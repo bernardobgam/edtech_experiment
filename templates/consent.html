@@ -1,0 +1,90 @@
+{% extends 'site.html' %}
+
+{% block content %}
+{% load static %}
+<div>
+
+  <!-- Researcher Controls -->
+  {% if user.is_authenticated %}
+  <div class="researcher-buttons">
+    <a class="btn-left r-btn" href="{% url 'instructions' %}"><span>&#60;</span> Back</a>
+    <div class="r-title">Researcher Controls</div>
+    <a class="btn-right r-btn" href="{% url 'content' %}">Next <span>&#62;</span></a>
+  </div>
+  {% endif %}
+
+  <!-- Header with image-->
+  <div style="background: url('{% static 'images/book.jpg' %}');" class="smaller-image home-image">
+    <div class="smaller-image home-image-layer" style="height: 150px">
+      <div class="home-title">
+        Consent
+      </div>
+    </div>
+  </div>
+
+  <div class="consent-text">
+    <strong>Experiment consent form</strong>
+    <br/><br/>
+    <ol>
+      <li class="consent-li">I have read this experiment instruction sheet and by filling this form I give my consent to participate in this economics experiment.</li>
+      <li class="consent-li">I acknowledge that:</li>
+      <ul style="list-style-type: lower-alpha;">
+        <li class="consent-li">Participation is voluntary and I may withdraw from the experiment at any time with no penalty.
+          If I choose to withdraw prior to the completion of the experiment I will forgo further earnings except the $5 show up fee.
+        </li>
+        <li class="consent-li">
+          Data collected during this experiment is saved anonymously and any use involves de-identified data, in which I can't be personally identified.
+        </li>
+        <li class="consent-li">
+          For purposes of the consent form and payment receipt, I need to provide my name and signature where required.
+          The information I provide in these forms is not linked to the rest of the experiment and is saved separatly.
+        </li>
+      </ul>
+    </ol>
+    <div>
+      <!-- <input class="checkbox" type="checkbox">
+      <span>I consent to participate</span> -->
+      {% if consent == True %}
+      <div id="consent-submitted" style="margin-bottom:20px;color:green;">
+        Your consent form is already submitted.
+      </div>
+      {% else %}
+      <form method="POST" name="consentform" id="consentform">
+        {% csrf_token %}
+        <label class="">Full name:<br/>
+          <input type="text" class="consent-input" name="name" value="" autocomplete="off">
+        </label>
+        <div id="name-validation" style="margin-bottom:20px;color:red;display:none">
+          You need to fill your complete name to participate in the experiment
+        </div>
+        <label class="checkbox-container">I consent to participate on this experiment.
+          <input type="checkbox" name="checkbox">
+          <span class="checkmark""></span>
+        </label>
+        <div id="checkbox-validation" style="margin-top:20px;color:red;display:none">
+          You need to check the box to participate in the experiment
+        </div>
+
+        <div class="consent-submit-container">
+          <button type="button" class="consent-submit-button" onclick="submitConsent()">Submit</button>
+        </div>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Next to Consent -->
+  {% if consent == True%}
+  <div class="btns-container2">
+    <a href="{% url 'waiting-screen' %}">
+      <button class="btn-right normal-btn">Next</button>
+    </a>
+  </div>
+  {% endif %}
+
+  <script src="{% static 'js/consent.js' %}" charset="utf-8"></script>
+  <script type="text/javascript">
+    console.log("{{consent}}")
+  </script>
+</div>
+{% endblock %}
